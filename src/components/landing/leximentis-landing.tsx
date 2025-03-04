@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
+import { Link } from 'react-router-dom';
 
-// Constants extracted from magic numbers
-const CHAOS_DURATION = 6000;
-const CONVERGENCE_FADE_IN_DELAY = 2000;
-const FIX_DEPTH_SORT_DELAY = 3000;
-const ORDERED_PHASE_DELAY = 4000;
+// Shortened animation timing constants
+const CHAOS_DURATION = 3000;
+const CONVERGENCE_FADE_IN_DELAY = 500;
+const FIX_DEPTH_SORT_DELAY = 1000;
+const ORDERED_PHASE_DELAY = 1500;
 
 // Custom interface for Material with dispose method
 interface Material extends THREE.Material {
@@ -16,6 +17,7 @@ interface Material extends THREE.Material {
 const LexiMentisLanding = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
+  const logoTextRef = useRef<HTMLDivElement>(null);
   const [animationPhase, setAnimationPhase] = useState<'chaos' | 'converging' | 'ordered'>('chaos');
   
   // Track animation frame ID for proper cleanup
@@ -32,9 +34,9 @@ const LexiMentisLanding = () => {
     // Store a reference to the current container for cleanup
     const container = containerRef.current;
     
-    // Scene setup
+    // Scene setup with black background for dramatic effect
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000); // Black background to match logo
+    scene.background = new THREE.Color(0x000000); // Pure black background
     
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -48,89 +50,66 @@ const LexiMentisLanding = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
     
-    // Create vibrant lighting to match the logo's colors
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    // Improved lighting for better document visibility
+    const ambientLight = new THREE.AmbientLight(0x444444, 0.8); // Brighter ambient light
     scene.add(ambientLight);
     
-    // Create colored lights matching the logo
-    const blueLight = new THREE.PointLight(0x4169e1, 1, 100); // Royal blue
-    blueLight.position.set(-20, 10, 30);
-    scene.add(blueLight);
-    
-    const goldLight = new THREE.PointLight(0xffd700, 1, 100); // Gold
-    goldLight.position.set(20, 15, 30);
+    // Create brighter gold lighting
+    const goldLight = new THREE.PointLight(0xffd700, 1.5, 120); // Brighter gold light with wider range
+    goldLight.position.set(20, 15, 40);
     scene.add(goldLight);
     
-    const purpleLight = new THREE.PointLight(0x800080, 0.8, 100); // Purple
-    purpleLight.position.set(0, -20, 30);
-    scene.add(purpleLight);
+    const warmLight = new THREE.PointLight(0xe67e22, 1.2, 100); // Brighter warm orange
+    warmLight.position.set(-20, 10, 30);
+    scene.add(warmLight);
     
-    const redLight = new THREE.PointLight(0xff4500, 0.7, 100); // Red-orange
-    redLight.position.set(15, -10, 20);
-    scene.add(redLight);
+    // Add extra light to illuminate documents better
+    const frontLight = new THREE.DirectionalLight(0xffffff, 0.7);
+    frontLight.position.set(0, 0, 50);
+    scene.add(frontLight);
     
-    // Function to create letter textures with dynamic colors and stylized text
-    const createLetterTexture = (letter: string, index: number) => {
-      // Create a canvas to draw the letter
+    // Function to create letter textures with consistent golden style
+    const createLetterTexture = (letter: string) => {
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 512;
       
-      // Get the drawing context
       const context = canvas.getContext('2d');
-      if (!context) return null; // Add null check
+      if (!context) return null;
       
-      // Create gradient background based on letter position
-      const gradient = context.createLinearGradient(0, 0, 512, 512);
-      
-      // Use colors from the logo
-      const colorSchemes = [
-        { start: '#fcd34d', end: '#f59e0b' }, // Gold gradient from CSS
-        { start: '#f59e0b', end: '#fcd34d' }, // Reverse gold gradient
-        { start: '#f59e0b', end: '#fcd34d' }, // Gold gradient again
-        { start: '#fcd34d', end: '#f59e0b' }  // Reverse gold gradient
-      ];
-      
-      const colorScheme = colorSchemes[index % colorSchemes.length];
-      gradient.addColorStop(0, colorScheme.start);
-      gradient.addColorStop(1, colorScheme.end);
-      
-      // Fill background with gradient
-      context.fillStyle = gradient;
+      // Use a very dark background to make the letters stand out more
+      context.fillStyle = '#111111';
       context.fillRect(0, 0, 512, 512);
       
-      // Add a subtle border
-      context.strokeStyle = '#ffffff';
-      context.lineWidth = 5;
-      context.strokeRect(10, 10, 492, 492);
-      
-      // Create a 3D effect with shadow
-      context.shadowColor = 'rgba(0, 0, 0, 0.5)';
-      context.shadowBlur = 15;
-      context.shadowOffsetX = 5;
-      context.shadowOffsetY = 5;
-      
-      // Create a metallic gradient for the text
+      // Create very bright gold metallic gradient for text
       const textGradient = context.createLinearGradient(100, 100, 400, 400);
-      textGradient.addColorStop(0, '#ffffff');
-      textGradient.addColorStop(0.5, '#f0f0f0');
-      textGradient.addColorStop(0.51, '#e0e0e0');
-      textGradient.addColorStop(1, '#ffffff');
+      textGradient.addColorStop(0, '#fff9c4'); // Very bright gold
+      textGradient.addColorStop(0.3, '#ffd700'); // Bright gold
+      textGradient.addColorStop(0.7, '#f39c12'); // Amber
+      textGradient.addColorStop(1, '#e67e22'); // Orange
       
-      // Draw letter outline first (for embossed effect)
-      context.lineWidth = 8;
-      context.strokeStyle = 'rgba(0, 0, 0, 0.3)';
-      context.font = 'bold 300px Arial';
+      // Strong shadow for depth
+      context.shadowColor = 'rgba(0, 0, 0, 0.8)';
+      context.shadowBlur = 25;
+      context.shadowOffsetX = 10;
+      context.shadowOffsetY = 10;
+      
+      // Draw letter with bold styling and larger font
+      context.font = 'bold 350px Arial'; // Larger font
       context.textAlign = 'center';
       context.textBaseline = 'middle';
+      
+      // Draw thick outline for more definition
+      context.lineWidth = 15;
+      context.strokeStyle = '#2c2c2c';
       context.strokeText(letter, 256, 256);
       
-      // Draw letter with gradient fill
+      // Fill with gold gradient
       context.fillStyle = textGradient;
       context.fillText(letter, 256, 256);
       
-      // Add shine effect
-      context.fillStyle = 'rgba(255, 255, 255, 0.2)';
+      // Add shine effect for metallic look
+      context.fillStyle = 'rgba(255, 255, 255, 0.35)'; // Brighter shine
       context.beginPath();
       context.moveTo(100, 100);
       context.lineTo(400, 100);
@@ -147,33 +126,31 @@ const LexiMentisLanding = () => {
       return texture;
     };
     
-    // Function to create document textures
+    // Function to create document textures with much more brightness for visibility on black
     const createDocumentTexture = (type: 'legal' | 'medical' | 'default') => {
-      // Create a canvas to draw the document
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 512;
       const context = canvas.getContext('2d');
       
-      // Add null check for context
       if (!context) return null;
       
       if (type === 'legal') {
-        // Draw legal pad
-        context.fillStyle = "#f5d682";
+        // Draw legal pad with much brighter colors
+        context.fillStyle = "#ffeb99"; // Brighter yellow
         context.fillRect(0, 0, 512, 512);
         
-        // Draw red margin
-        context.strokeStyle = "#cc3333";
-        context.lineWidth = 6;
+        // Add stronger red margin
+        context.strokeStyle = "#ff5555"; // Brighter red
+        context.lineWidth = 8;
         context.beginPath();
         context.moveTo(70, 0);
         context.lineTo(70, 512);
         context.stroke();
         
-        // Draw blue lines
-        context.strokeStyle = "#9999cc";
-        context.lineWidth = 2;
+        // Draw blue lines with more contrast
+        context.strokeStyle = "#5555ff"; // Brighter blue
+        context.lineWidth = 3; // Thicker lines
         for (let i = 0; i < 8; i++) {
           context.beginPath();
           context.moveTo(0, 80 + i * 60);
@@ -182,37 +159,37 @@ const LexiMentisLanding = () => {
         }
         
       } else if (type === 'medical') {
-        // Draw medical record
-        context.fillStyle = "#f0f7ff";
+        // Draw medical record with much brighter colors
+        context.fillStyle = "#ffffff"; // Pure white
         context.fillRect(0, 0, 512, 512);
         
         // Draw header
-        context.fillStyle = "#d3e0ea";
+        context.fillStyle = "#99ccff"; // Brighter blue
         context.fillRect(20, 20, 472, 100);
-        context.strokeStyle = "#6097c1";
+        context.strokeStyle = "#0066ff"; // Vivid blue
         context.lineWidth = 4;
         context.strokeRect(20, 20, 472, 100);
         
         // Draw medical cross
-        context.fillStyle = "#cc3333";
+        context.fillStyle = "#ff3333"; // Brighter red
         context.fillRect(50, 30, 30, 80);
         context.fillRect(25, 55, 80, 30);
         
       } else {
-        // Default document
-        context.fillStyle = "#ffffff";
+        // Default document with high contrast
+        context.fillStyle = "#ffffff"; // Pure white
         context.fillRect(0, 0, 512, 512);
         
         // Draw header area
-        context.fillStyle = "#f5f5f5";
+        context.fillStyle = "#dddddd";
         context.fillRect(50, 50, 412, 80);
         context.strokeStyle = "#000000";
-        context.lineWidth = 2;
+        context.lineWidth = 3;
         context.strokeRect(50, 50, 412, 80);
         
         // Draw lines
-        context.strokeStyle = "#dddddd";
-        context.lineWidth = 1;
+        context.strokeStyle = "#666666"; // Darker lines for contrast
+        context.lineWidth = 2; // Thicker lines
         for (let i = 0; i < 6; i++) {
           context.beginPath();
           context.moveTo(50, 200 + i * 40);
@@ -229,10 +206,10 @@ const LexiMentisLanding = () => {
       return texture;
     };
     
-    // Create letter textures for "LEXIMENTIS"
+    // Create letter textures for "LEXIMENTIS" with consistent style
     const letterTextures: (THREE.Texture | null)[] = [];
-    [..."LEXIMENTIS"].forEach((letter, index) => {
-      const texture = createLetterTexture(letter, index);
+    [..."LEXIMENTIS"].forEach((letter) => {
+      const texture = createLetterTexture(letter);
       if (texture) letterTextures.push(texture);
     });
     
@@ -241,19 +218,18 @@ const LexiMentisLanding = () => {
       createDocumentTexture('legal'),
       createDocumentTexture('medical'),
       createDocumentTexture('default')
-    ].filter(Boolean) as THREE.Texture[]; // Filter out any null textures
+    ].filter(Boolean) as THREE.Texture[];
     
-    // Generate positions for a horizontal "LexiMentis" formation
+    // Generate positions for a better "LexiMentis" formation with more spacing
     const generateLexiMentisPositions = () => {
-      // Simple horizontal line with even spacing for "LEXIMENTIS"
       const positions = [];
       const letterCount = 10; // LEXIMENTIS has 10 letters
-      const spacing = 6; // Horizontal spacing between letters
+      const spacing = 7; // Wider spacing between letters for better readability
       
       for (let i = 0; i < letterCount; i++) {
         positions.push(new THREE.Vector3(
           (i - (letterCount - 1) / 2) * spacing,
-          8, // Position higher up
+          10, // Position higher up for better separation from tagline
           -5
         ));
       }
@@ -261,46 +237,48 @@ const LexiMentisLanding = () => {
       return positions;
     };
     
-    // Objects (legal documents, folders, etc.)
-    const NUM_OBJECTS = 40;
-    const objects: THREE.Mesh[] = []; // corrected the array initialization
+    // Create more flying documents for a more dramatic effect
+    const NUM_OBJECTS = 60; // Increased from 40
+    const objects: THREE.Mesh[] = [];
     
     // Create main letter objects first (for "LEXIMENTIS")
     const letterPositions = generateLexiMentisPositions();
     for (let i = 0; i < letterPositions.length; i++) {
-      const geometry = new THREE.PlaneGeometry(5, 6);
+      const geometry = new THREE.PlaneGeometry(6, 8); // Even larger letters
       const material = new THREE.MeshStandardMaterial({
         map: letterTextures[i] || null,
         transparent: true,
         side: THREE.DoubleSide,
-        metalness: 0.1,
-        roughness: 0.8,
+        metalness: 0.8, // More metallic
+        roughness: 0.2, // Less rough for shinier look
         depthWrite: true,
         depthTest: true,
         alphaTest: 0.1,
+        emissive: new THREE.Color(0xffcc00), // Golden emissive glow
+        emissiveIntensity: 0.2, // Subtle glow
       });
       
       const mesh = new THREE.Mesh(geometry, material);
       
-      // Randomize initial positions (chaos)
+      // Randomize initial positions with wider spread for more dramatic convergence
       mesh.position.set(
-        (Math.random() - 0.5) * 100,
-        (Math.random() - 0.5) * 100,
-        (Math.random() - 0.5) * 100
+        (Math.random() - 0.5) * 120,
+        (Math.random() - 0.5) * 120,
+        (Math.random() - 0.5) * 120
       );
       
       // Random rotation
       mesh.rotation.set(
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-        Math.random() * Math.PI
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2, 
+        Math.random() * Math.PI * 2
       );
       
       // Store animation data
       mesh.userData = {
         targetPosition: letterPositions[i],
-        swirlSpeed: 0.005 + Math.random() * 0.015,
-        swirlRadius: 30 + Math.random() * 10,
+        swirlSpeed: 0.004 + Math.random() * 0.012,
+        swirlRadius: 35 + Math.random() * 15, // Wider radius
         angle: Math.random() * Math.PI * 2,
         isLetter: true,
         letterIndex: i
@@ -310,7 +288,7 @@ const LexiMentisLanding = () => {
       scene.add(mesh);
     }
     
-    // Add extra document objects
+    // Add extra document objects with emissive glow for visibility
     for (let i = letterPositions.length; i < NUM_OBJECTS; i++) {
       const geometry = new THREE.PlaneGeometry(4, 5);
       const docType = i % documentTextures.length;
@@ -318,41 +296,43 @@ const LexiMentisLanding = () => {
         map: documentTextures[docType],
         transparent: true,
         side: THREE.DoubleSide,
-        metalness: 0.1,
-        roughness: 0.8,
+        metalness: 0.3,
+        roughness: 0.7,
         depthWrite: true,
         depthTest: true,
         alphaTest: 0.1,
+        emissive: new THREE.Color(0xffffff), // White emissive for documents
+        emissiveIntensity: 0.15, // Subtle glow
       });
       
       const mesh = new THREE.Mesh(geometry, material);
       
-      // Randomize initial positions (chaos)
+      // Randomize initial positions with wider spread
       mesh.position.set(
-        (Math.random() - 0.5) * 100,
-        (Math.random() - 0.5) * 100,
-        (Math.random() - 0.5) * 100
+        (Math.random() - 0.5) * 120,
+        (Math.random() - 0.5) * 120,
+        (Math.random() - 0.5) * 120
       );
       
       // Random rotation
       mesh.rotation.set(
-        Math.random() * Math.PI,
-        Math.random() * Math.PI,
-        Math.random() * Math.PI
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2,
+        Math.random() * Math.PI * 2
       );
       
-      // Position background documents in a scattered formation with more space
+      // Position background documents in a scattered formation
       mesh.userData = {
         targetPosition: new THREE.Vector3(
-          (Math.random() - 0.5) * 80, // Spread more horizontally
-          -25 - Math.random() * 15,   // Position much lower
-          -20 - Math.random() * 10    // Further back
+          (Math.random() - 0.5) * 100, // Wider spread
+          -30 - Math.random() * 20,   // Position lower down to create more space
+          -30 - Math.random() * 15    // Further back
         ),
         swirlSpeed: 0.005 + Math.random() * 0.015,
-        swirlRadius: 30 + Math.random() * 10,
+        swirlRadius: 35 + Math.random() * 15,
         angle: Math.random() * Math.PI * 2,
         isLetter: false,
-        fadingOut: Math.random() < 0.3 // Only 30% of background documents will fade out
+        fadingOut: Math.random() < 0.5 // More documents fade out
       };
       
       objects.push(mesh);
@@ -364,38 +344,37 @@ const LexiMentisLanding = () => {
     let isConverging = false;
     let hasFixedDepthSorting = false;
     
-    // Animation loop with proper reference tracking
+    // Animation loop with improved dynamics
     const animate = () => {
       if (!isMountedRef.current) return;
       
       requestIdRef.current = requestAnimationFrame(animate);
       const elapsed = performance.now() - startTime;
       
-      // Phase 1: Chaos swirling
+      // Phase 1: Chaos swirling with more dynamic movement
       if (!isConverging) {
         objects.forEach((obj) => {
           obj.userData.angle += obj.userData.swirlSpeed;
           
-          // Swirl in 3D space
+          // More dynamic 3D swirling
           const radius = obj.userData.swirlRadius;
-          obj.position.x = Math.cos(obj.userData.angle) * radius;
-          obj.position.y = Math.sin(obj.userData.angle) * radius;
-          obj.position.z = Math.sin(obj.userData.angle * 0.5) * radius * 0.5;
+          obj.position.x = Math.cos(obj.userData.angle) * radius * 0.8;
+          obj.position.y = Math.sin(obj.userData.angle * 1.1) * radius;
+          obj.position.z = Math.sin(obj.userData.angle * 0.7) * radius * 0.6;
           
-          // Rotation
-          obj.rotation.x += 0.005;
-          obj.rotation.y += 0.005;
+          // More dynamic rotation
+          obj.rotation.x += 0.01;
+          obj.rotation.y += 0.008;
           obj.rotation.z += 0.005;
         });
         
-        // After 6 seconds, trigger convergence
         if (elapsed > CHAOS_DURATION && isMountedRef.current) {
           isConverging = true;
           startTime = performance.now();
           setAnimationPhase('converging');
         }
       } else {
-        // Phase 2: Converge to target positions
+        // Phase 2: Converge to target positions with improved dynamics
         let allConverged = true;
         
         objects.forEach((obj) => {
@@ -407,16 +386,16 @@ const LexiMentisLanding = () => {
             allConverged = false;
           }
           
-          // Lerp to target
-          obj.position.lerp(targetPosition, 0.03);
+          // Faster convergence for a more dramatic effect
+          obj.position.lerp(targetPosition, 0.05);
           
-          // Align rotation
-          obj.rotation.x = THREE.MathUtils.lerp(obj.rotation.x, 0, 0.05);
-          obj.rotation.y = THREE.MathUtils.lerp(obj.rotation.y, 0, 0.05);
-          obj.rotation.z = THREE.MathUtils.lerp(obj.rotation.z, 0, 0.05);
+          // Align rotation with more dynamic damping
+          obj.rotation.x = THREE.MathUtils.lerp(obj.rotation.x, 0, 0.08);
+          obj.rotation.y = THREE.MathUtils.lerp(obj.rotation.y, 0, 0.08);
+          obj.rotation.z = THREE.MathUtils.lerp(obj.rotation.z, 0, 0.08);
         });
         
-        // Fix depth sorting issues after objects have mostly converged
+        // Fix depth sorting issues
         if (!hasFixedDepthSorting && elapsed > FIX_DEPTH_SORT_DELAY) {
           // Sort objects based on material and position to prevent flickering
           objects.forEach((obj, index) => {
@@ -475,7 +454,7 @@ const LexiMentisLanding = () => {
           hasFixedDepthSorting = true;
         }
         
-        // Fade out background documents that are marked for fading
+        // Fade out background documents
         if (elapsed > ORDERED_PHASE_DELAY) {
           objects.forEach(obj => {
             if (!obj.userData.isLetter && obj.userData.fadingOut) {
@@ -501,9 +480,20 @@ const LexiMentisLanding = () => {
           });
         }
         
-        // Fade in title after 2 seconds of convergence
-        if (elapsed > CONVERGENCE_FADE_IN_DELAY && textRef.current) {
-          textRef.current.style.opacity = Math.min((elapsed - CONVERGENCE_FADE_IN_DELAY) / 1000, 1).toString();
+        // Fade in texts after brief delay
+        if (elapsed > CONVERGENCE_FADE_IN_DELAY) {
+          // Fade in the tagline text
+          if (textRef.current) {
+            textRef.current.style.opacity = Math.min((elapsed - CONVERGENCE_FADE_IN_DELAY) / 800, 1).toString();
+          }
+          
+          // Fade in the LexiMentis text with a slight delay
+          if (logoTextRef.current) {
+            const logoDelay = 300; // 300ms after tagline starts appearing
+            if (elapsed > CONVERGENCE_FADE_IN_DELAY + logoDelay) {
+              logoTextRef.current.style.opacity = Math.min((elapsed - CONVERGENCE_FADE_IN_DELAY - logoDelay) / 600, 1).toString();
+            }
+          }
         }
         
         if (allConverged && elapsed > ORDERED_PHASE_DELAY && isMountedRef.current) {
@@ -569,7 +559,7 @@ const LexiMentisLanding = () => {
       });
       
       // Clean up lights
-      [ambientLight, blueLight, goldLight, purpleLight, redLight].forEach(light => {
+      [ambientLight, goldLight, warmLight, frontLight].forEach(light => {
         if (light && scene) {
           scene.remove(light);
         }
@@ -587,30 +577,45 @@ const LexiMentisLanding = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-screen bg-black overflow-hidden">
       <div ref={containerRef} className="absolute inset-0" />
+      
+      {/* Add explicit LexiMentis text overlay that will fade in */}
       <div 
-        ref={textRef} // Using ref instead of state for opacity
-        className="absolute inset-0 flex flex-col items-center justify-center text-white pointer-events-none z-10"
+        ref={logoTextRef}
+        className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
         style={{ opacity: 0 }}
       >
-        {/* No LexiMentis text here since it will be formed by the documents */}
-        <div className="mt-64 text-center"> {/* Increased top margin to accommodate higher logo */}
-          <p className="text-3xl font-light bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent">
+        <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 
+                    bg-clip-text text-transparent drop-shadow-xl tracking-wide">
+          LEXIMENTIS
+        </h1>
+      </div>
+      
+      {/* Tagline and button */}
+      <div 
+        ref={textRef}
+        className="absolute inset-0 flex flex-col items-center justify-center text-white pointer-events-none z-20"
+        style={{ opacity: 0 }}
+      >
+        <div className="mt-80 text-center"> {/* Increased top margin for better spacing */}
+          <p className="text-3xl font-bold bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 bg-clip-text text-transparent drop-shadow-lg">
             Bringing Order Out of Chaos
           </p>
           
           {animationPhase === 'ordered' && (
-            <div className="mt-16 transition-opacity duration-500"> {/* Increased spacing */}
-              <p className="text-xl mb-8 max-w-2xl mx-auto">
+            <div className="mt-20 transition-opacity duration-500"> {/* Increased spacing */}
+              <p className="text-xl mb-12 max-w-2xl mx-auto text-gray-300">
                 Leveraging AI to streamline workers' compensation legal workflows
               </p>
-              <button 
-                className="bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black font-semibold py-4 px-10 rounded-lg 
-                          transition-colors pointer-events-auto shadow-lg text-lg"
+              
+              <Link 
+                to="/how-it-works"
+                className="bg-gradient-to-r from-amber-400 to-amber-600 hover:from-amber-500 hover:to-amber-700 text-black font-semibold py-4 px-12 rounded-lg 
+                          transition-colors pointer-events-auto shadow-lg text-lg inline-block"
               >
                 Learn More
-              </button>
+              </Link>
             </div>
           )}
         </div>
