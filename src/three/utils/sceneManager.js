@@ -170,12 +170,13 @@ export class FractalSceneManager {
   }
 
   cleanup() {
-    // Cancel animation frame
-    if (this.animationFrameId) {
+    // Cancel animation frame using the stored ID
+    if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
     }
     
-    // Remove event listeners
+    // Remove event listeners with the exact same function references
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('mousemove', this.handleMouseMove);
     window.removeEventListener('touchmove', this.handleTouchMove);

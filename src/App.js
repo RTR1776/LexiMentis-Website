@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import LandingPage from './components/landing/leximentis-landing';
 import HowItWorksPage from './pages/HowItWorks';
@@ -10,16 +10,18 @@ import AboutPage from './pages/AboutPage';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<LandingPage />} />
-        <Route path="how-it-works" element={<HowItWorksPage />} />
-        <Route path="demo" element={<DemoPage />} />
-        <Route path="book" element={<BookingPage />} />
-        <Route path="calculator" element={<CalculatorPage />} />
-        <Route path="about" element={<AboutPage />} />
-      </Route>
-    </Routes>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<LandingPage />} />
+          <Route path="how-it-works" element={<HowItWorksPage />} />
+          <Route path="demo" element={<DemoPage />} />
+          <Route path="book" element={<BookingPage />} />
+          <Route path="calculator" element={<CalculatorPage />} />
+          <Route path="about" element={<AboutPage />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }
 

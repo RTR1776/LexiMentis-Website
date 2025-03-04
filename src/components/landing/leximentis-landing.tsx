@@ -7,12 +7,23 @@ const CONVERGENCE_FADE_IN_DELAY = 2000;
 const FIX_DEPTH_SORT_DELAY = 3000;
 const ORDERED_PHASE_DELAY = 4000;
 
+// Custom interface for Material with dispose method
+interface DisposableMaterial {
+  map?: { dispose: () => void };
+  dispose: () => void;
+}
+
 const LexiMentisLanding = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [animationPhase, setAnimationPhase] = useState<'chaos' | 'converging' | 'ordered'>('chaos');
 
   useEffect(() => {
+    // Prevent duplicate setup in React 19 Strict Mode
+    const setupRef = useRef(false);
+    if (setupRef.current) return;
+    setupRef.current = true;
+
     if (!containerRef.current) return;
     
     // Store a reference to the current container for cleanup
@@ -519,20 +530,63 @@ const LexiMentisLanding = () => {
     
     // Cleanup
     return () => {
+      setupRef.current = false;
       window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId); // Proper cleanup of animation frame
-      if (container && container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement);
+      
+      // Ensure animationFrameId is properly tracked and cancelled
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
       }
+      
+      // Clean up THREE.js resources
+      if (container && renderer && renderer.domElement) {
+        if (container.contains(renderer.domElement)) {
+          container.removeChild(renderer.domElement);
+        }
+      }
+      
+      // Dispose of geometries and materials
       objects.forEach(obj => {
-        obj.geometry.dispose();
-        if (Array.isArray(obj.material)) { // Better handling of multi-material objects
-          obj.material.forEach(mat => mat.dispose());
-        } else {
-          obj.material.dispose();
+        if (obj.geometry) obj.geometry.dispose();
+        
+        if (Array.isArray(obj.material)) {
+          obj.material.forEach(mat => {
+            // Two-step casting through unknown
+            const material = (mat as unknown) as DisposableMaterial;
+            if (material.map) material.map.dispose();
+            material.dispose();
+          });
+        } else if (obj.material) {
+          // Two-step casting through unknown
+          const material = (obj.material as unknown) as DisposableMaterial;
+          if (material.map) material.map.dispose();
+          material.dispose();
         }
       });
-      renderer.dispose();
+      
+      if (renderer) renderer.dispose();
+      if (scene) {
+        // Clean up all objects in the scene
+        scene.traverse((object) => {
+          if (object instanceof THREE.Mesh) {
+            if (object.geometry) object.geometry.dispose();
+            
+            if (Array.isArray(object.material)) {
+              object.material.forEach((material) => {
+                // Two-step casting through unknown
+                const mat = (material as unknown) as DisposableMaterial;
+                if (mat.map) mat.map.dispose();
+                mat.dispose();
+              });
+            } else if (object.material) {
+              // Two-step casting through unknown
+              const mat = (object.material as unknown) as DisposableMaterial;
+              if (mat.map) mat.map.dispose();
+              mat.dispose();
+            }
+          }
+        });
+      }
     };
   }, []);
 
