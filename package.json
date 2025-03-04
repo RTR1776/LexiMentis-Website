@@ -8,6 +8,7 @@
     "@react-spring/three": "9.7.5",
     "@react-spring/web": "9.7.5",
     "@types/three": "^0.174.0",
+    "@vercel/analytics": "^1.5.0",
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
     "chart.js": "^4.3.3",
