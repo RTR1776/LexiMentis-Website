@@ -17,12 +17,15 @@ const LexiMentisLanding = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [animationPhase, setAnimationPhase] = useState<'chaos' | 'converging' | 'ordered'>('chaos');
+  
+  // Track animation frame ID for proper cleanup
+  const requestIdRef = useRef<number | null>(null);
+  // Track if component is mounted to prevent state updates after unmount
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
-    // Prevent duplicate setup in React 19 Strict Mode
-    const setupRef = useRef(false);
-    if (setupRef.current) return;
-    setupRef.current = true;
+    // Set mounted flag
+    isMountedRef.current = true;
 
     if (!containerRef.current) return;
     
@@ -360,11 +363,12 @@ const LexiMentisLanding = () => {
     let startTime = performance.now();
     let isConverging = false;
     let hasFixedDepthSorting = false;
-    let animationFrameId: number; // Added tracking of animation frame ID for proper cleanup
     
-    // Animation loop
+    // Animation loop with proper reference tracking
     const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
+      if (!isMountedRef.current) return;
+      
+      requestIdRef.current = requestAnimationFrame(animate);
       const elapsed = performance.now() - startTime;
       
       // Phase 1: Chaos swirling
@@ -385,7 +389,7 @@ const LexiMentisLanding = () => {
         });
         
         // After 6 seconds, trigger convergence
-        if (elapsed > CHAOS_DURATION) {
+        if (elapsed > CHAOS_DURATION && isMountedRef.current) {
           isConverging = true;
           startTime = performance.now();
           setAnimationPhase('converging');
@@ -424,7 +428,6 @@ const LexiMentisLanding = () => {
             obj.rotation.set(0, 0, 0);
             
             // Update material to prevent rendering artifacts
-            // Check if material exists and handle both single material and array cases
             if (obj.material) {
               if (Array.isArray(obj.material)) {
                 // Handle material array
@@ -436,10 +439,8 @@ const LexiMentisLanding = () => {
                   clonedMat.alphaTest = 0.1;
                   clonedMat.transparent = true;
                   
-                  // Type cast to a material type that has the map property
                   const typedClonedMat = clonedMat as THREE.MeshStandardMaterial;
                   
-                  // Force texture update
                   if (typedClonedMat.map) {
                     typedClonedMat.map.needsUpdate = true;
                   }
@@ -454,11 +455,9 @@ const LexiMentisLanding = () => {
                 material.alphaTest = 0.1;
                 material.transparent = true;
                 
-                // Type cast once at the beginning
                 const typedMaterial = material as THREE.MeshStandardMaterial;
                 obj.material = typedMaterial;
                 
-                // Now TypeScript knows this is a MeshStandardMaterial
                 if (typedMaterial.map) {
                   typedMaterial.map.needsUpdate = true;
                 }
@@ -503,13 +502,11 @@ const LexiMentisLanding = () => {
         }
         
         // Fade in title after 2 seconds of convergence
-        if (elapsed > CONVERGENCE_FADE_IN_DELAY) {
-          if (textRef.current) {
-            textRef.current.style.opacity = Math.min((elapsed - CONVERGENCE_FADE_IN_DELAY) / 1000, 1).toString();
-          }
+        if (elapsed > CONVERGENCE_FADE_IN_DELAY && textRef.current) {
+          textRef.current.style.opacity = Math.min((elapsed - CONVERGENCE_FADE_IN_DELAY) / 1000, 1).toString();
         }
         
-        if (allConverged && elapsed > ORDERED_PHASE_DELAY) {
+        if (allConverged && elapsed > ORDERED_PHASE_DELAY && isMountedRef.current) {
           setAnimationPhase('ordered');
         }
       }
@@ -517,10 +514,13 @@ const LexiMentisLanding = () => {
       renderer.render(scene, camera);
     };
     
+    // Start animation
     animate();
     
     // Responsive resizing
     const handleResize = () => {
+      if (!isMountedRef.current) return;
+      
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -530,13 +530,17 @@ const LexiMentisLanding = () => {
     
     // Cleanup
     return () => {
-      setupRef.current = false;
-      window.removeEventListener('resize', handleResize);
+      // Set mounted flag to false to prevent further updates
+      isMountedRef.current = false;
       
-      // Ensure animationFrameId is properly tracked and cancelled
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
+      // Cancel animation frame
+      if (requestIdRef.current !== null) {
+        cancelAnimationFrame(requestIdRef.current);
+        requestIdRef.current = null;
       }
+      
+      // Remove event listeners
+      window.removeEventListener('resize', handleResize);
       
       // Clean up THREE.js resources
       if (container && renderer && renderer.domElement) {
@@ -545,48 +549,38 @@ const LexiMentisLanding = () => {
         }
       }
       
-      // Dispose of geometries and materials
+      // Dispose of geometries and materials with proper type checking
       objects.forEach(obj => {
         if (obj.geometry) obj.geometry.dispose();
         
         if (Array.isArray(obj.material)) {
           obj.material.forEach(mat => {
-            // Two-step casting through unknown
-            const material = (mat as unknown) as DisposableMaterial;
-            if (material.map) material.map.dispose();
-            material.dispose();
+            // Safely dispose of material and its textures
+            if (mat.map) mat.map.dispose();
+            mat.dispose();
           });
         } else if (obj.material) {
-          // Two-step casting through unknown
-          const material = (obj.material as unknown) as DisposableMaterial;
-          if (material.map) material.map.dispose();
-          material.dispose();
+          // Safely dispose of material and its textures
+          if (obj.material.map) obj.material.map.dispose();
+          obj.material.dispose();
         }
       });
       
-      if (renderer) renderer.dispose();
-      if (scene) {
-        // Clean up all objects in the scene
-        scene.traverse((object) => {
-          if (object instanceof THREE.Mesh) {
-            if (object.geometry) object.geometry.dispose();
-            
-            if (Array.isArray(object.material)) {
-              object.material.forEach((material) => {
-                // Two-step casting through unknown
-                const mat = (material as unknown) as DisposableMaterial;
-                if (mat.map) mat.map.dispose();
-                mat.dispose();
-              });
-            } else if (object.material) {
-              // Two-step casting through unknown
-              const mat = (object.material as unknown) as DisposableMaterial;
-              if (mat.map) mat.map.dispose();
-              mat.dispose();
-            }
-          }
-        });
+      // Clean up lights
+      [ambientLight, blueLight, goldLight, purpleLight, redLight].forEach(light => {
+        if (light && scene) {
+          scene.remove(light);
+        }
+      });
+      
+      // Clean up all objects in the scene
+      while (scene.children.length > 0) {
+        const object = scene.children[0];
+        scene.remove(object);
       }
+      
+      // Dispose renderer
+      if (renderer) renderer.dispose();
     };
   }, []);
 

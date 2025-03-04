@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "downlevelIteration": true,
-    "checkJs": false  // Or true if you want type checking in JS files
+    "checkJs": false,  // Or true if you want type checking in JS files
+    "types": ["react", "react-dom"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
