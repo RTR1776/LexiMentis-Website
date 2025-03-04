@@ -15,13 +15,13 @@ const Header = ({ scrolled }) => {
 
   return (
     <header 
-      className={`fixed w-full z-50 transition-all duration-300 ${
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
         scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
       }`}
     >
       <div className="container-custom flex items-center justify-between">
         <Link to="/" className="flex items-center">
-          <span className="text-2xl font-bold text-primary-700">LexiMentis</span>
+          <span className="text-2xl font-bold text-primary-600">LexiMentis</span>
         </Link>
         
         {/* Desktop Navigation */}
