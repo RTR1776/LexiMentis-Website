@@ -1,12 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
+// Constants extracted from magic numbers
+const CHAOS_DURATION = 6000;
+const CONVERGENCE_FADE_IN_DELAY = 2000;
+const FIX_DEPTH_SORT_DELAY = 3000;
+const ORDERED_PHASE_DELAY = 4000;
+
 const LexiMentisLanding = () => {
-  const containerRef = useRef(null);
-  const [animationPhase, setAnimationPhase] = useState('chaos');
-  const [textOpacity, setTextOpacity] = useState(0);
-  
+  const containerRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const [animationPhase, setAnimationPhase] = useState<'chaos' | 'converging' | 'ordered'>('chaos');
+
   useEffect(() => {
+    if (!containerRef.current) return;
+    
+    // Store a reference to the current container for cleanup
+    const container = containerRef.current;
+    
     // Scene setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000); // Black background to match logo
@@ -21,7 +32,7 @@ const LexiMentisLanding = () => {
     
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    containerRef.current.appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
     
     // Create vibrant lighting to match the logo's colors
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -45,12 +56,15 @@ const LexiMentisLanding = () => {
     scene.add(redLight);
     
     // Function to create letter textures with dynamic colors and stylized text
-    const createLetterTexture = (letter, index) => {
+    const createLetterTexture = (letter: string, index: number) => {
       // Create a canvas to draw the letter
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 512;
+      
+      // Get the drawing context
       const context = canvas.getContext('2d');
+      if (!context) return null; // Add null check
       
       // Create gradient background based on letter position
       const gradient = context.createLinearGradient(0, 0, 512, 512);
@@ -120,12 +134,15 @@ const LexiMentisLanding = () => {
     };
     
     // Function to create document textures
-    const createDocumentTexture = (type) => {
+    const createDocumentTexture = (type: 'legal' | 'medical' | 'default') => {
       // Create a canvas to draw the document
       const canvas = document.createElement('canvas');
       canvas.width = 512;
       canvas.height = 512;
       const context = canvas.getContext('2d');
+      
+      // Add null check for context
+      if (!context) return null;
       
       if (type === 'legal') {
         // Draw legal pad
@@ -199,9 +216,10 @@ const LexiMentisLanding = () => {
     };
     
     // Create letter textures for "LEXIMENTIS"
-    const letterTextures = [];
+    const letterTextures: (THREE.Texture | null)[] = [];
     [..."LEXIMENTIS"].forEach((letter, index) => {
-      letterTextures.push(createLetterTexture(letter, index));
+      const texture = createLetterTexture(letter, index);
+      if (texture) letterTextures.push(texture);
     });
     
     // Create document textures for background documents
@@ -209,7 +227,7 @@ const LexiMentisLanding = () => {
       createDocumentTexture('legal'),
       createDocumentTexture('medical'),
       createDocumentTexture('default')
-    ];
+    ].filter(Boolean) as THREE.Texture[]; // Filter out any null textures
     
     // Generate positions for a horizontal "LexiMentis" formation
     const generateLexiMentisPositions = () => {
@@ -231,14 +249,14 @@ const LexiMentisLanding = () => {
     
     // Objects (legal documents, folders, etc.)
     const NUM_OBJECTS = 40;
-    const objects = [];
+    const objects: THREE.Mesh[] = []; // corrected the array initialization
     
     // Create main letter objects first (for "LEXIMENTIS")
     const letterPositions = generateLexiMentisPositions();
     for (let i = 0; i < letterPositions.length; i++) {
       const geometry = new THREE.PlaneGeometry(5, 6);
       const material = new THREE.MeshStandardMaterial({
-        map: letterTextures[i],
+        map: letterTextures[i] || null,
         transparent: true,
         side: THREE.DoubleSide,
         metalness: 0.1,
@@ -331,10 +349,11 @@ const LexiMentisLanding = () => {
     let startTime = performance.now();
     let isConverging = false;
     let hasFixedDepthSorting = false;
+    let animationFrameId: number; // Added tracking of animation frame ID for proper cleanup
     
     // Animation loop
     const animate = () => {
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
       const elapsed = performance.now() - startTime;
       
       // Phase 1: Chaos swirling
@@ -355,7 +374,7 @@ const LexiMentisLanding = () => {
         });
         
         // After 6 seconds, trigger convergence
-        if (elapsed > 6000) {
+        if (elapsed > CHAOS_DURATION) {
           isConverging = true;
           startTime = performance.now();
           setAnimationPhase('converging');
@@ -383,7 +402,7 @@ const LexiMentisLanding = () => {
         });
         
         // Fix depth sorting issues after objects have mostly converged
-        if (!hasFixedDepthSorting && elapsed > 3000) {
+        if (!hasFixedDepthSorting && elapsed > FIX_DEPTH_SORT_DELAY) {
           // Sort objects based on material and position to prevent flickering
           objects.forEach((obj, index) => {
             // Assign consistent z-depths to prevent z-fighting
@@ -394,18 +413,44 @@ const LexiMentisLanding = () => {
             obj.rotation.set(0, 0, 0);
             
             // Update material to prevent rendering artifacts
+            // Check if material exists and handle both single material and array cases
             if (obj.material) {
-              // Clone the material to prevent shared material issues
-              obj.material = obj.material.clone();
-              obj.material.needsUpdate = true;
-              obj.material.depthWrite = true;
-              obj.material.depthTest = true;
-              obj.material.alphaTest = 0.1;
-              obj.material.transparent = true;
-              
-              // Force texture update
-              if (obj.material.map) {
-                obj.material.map.needsUpdate = true;
+              if (Array.isArray(obj.material)) {
+                // Handle material array
+                obj.material = obj.material.map(mat => {
+                  const clonedMat = mat.clone();
+                  clonedMat.needsUpdate = true;
+                  clonedMat.depthWrite = true;
+                  clonedMat.depthTest = true;
+                  clonedMat.alphaTest = 0.1;
+                  clonedMat.transparent = true;
+                  
+                  // Type cast to a material type that has the map property
+                  const typedClonedMat = clonedMat as THREE.MeshStandardMaterial;
+                  
+                  // Force texture update
+                  if (typedClonedMat.map) {
+                    typedClonedMat.map.needsUpdate = true;
+                  }
+                  return typedClonedMat;
+                });
+              } else {
+                // Handle single material
+                const material = obj.material.clone();
+                material.needsUpdate = true;
+                material.depthWrite = true;
+                material.depthTest = true;
+                material.alphaTest = 0.1;
+                material.transparent = true;
+                
+                // Type cast once at the beginning
+                const typedMaterial = material as THREE.MeshStandardMaterial;
+                obj.material = typedMaterial;
+                
+                // Now TypeScript knows this is a MeshStandardMaterial
+                if (typedMaterial.map) {
+                  typedMaterial.map.needsUpdate = true;
+                }
               }
             }
           });
@@ -421,23 +466,39 @@ const LexiMentisLanding = () => {
         }
         
         // Fade out background documents that are marked for fading
-        if (elapsed > 4000) {
+        if (elapsed > ORDERED_PHASE_DELAY) {
           objects.forEach(obj => {
             if (!obj.userData.isLetter && obj.userData.fadingOut) {
-              // Fade out but not completely - stop at 30% opacity for a subtle effect
-              if (obj.material && obj.material.opacity > 0.3) {
-                obj.material.opacity = Math.max(0.3, obj.material.opacity - 0.01);
+              // Handle material property which could be a single material or an array
+              if (obj.material) {
+                if (Array.isArray(obj.material)) {
+                  // Handle material array
+                  obj.material.forEach(mat => {
+                    // Fade out but not completely - stop at 30% opacity for a subtle effect
+                    if (mat.opacity !== undefined && mat.opacity > 0.3) {
+                      mat.opacity = Math.max(0.3, mat.opacity - 0.01);
+                    }
+                  });
+                } else {
+                  // Handle single material
+                  // Fade out but not completely - stop at 30% opacity for a subtle effect
+                  if (obj.material.opacity !== undefined && obj.material.opacity > 0.3) {
+                    obj.material.opacity = Math.max(0.3, obj.material.opacity - 0.01);
+                  }
+                }
               }
             }
           });
         }
         
         // Fade in title after 2 seconds of convergence
-        if (elapsed > 2000) {
-          setTextOpacity(Math.min((elapsed - 2000) / 1000, 1));
+        if (elapsed > CONVERGENCE_FADE_IN_DELAY) {
+          if (textRef.current) {
+            textRef.current.style.opacity = Math.min((elapsed - CONVERGENCE_FADE_IN_DELAY) / 1000, 1).toString();
+          }
         }
         
-        if (allConverged && elapsed > 4000) {
+        if (allConverged && elapsed > ORDERED_PHASE_DELAY) {
           setAnimationPhase('ordered');
         }
       }
@@ -459,24 +520,29 @@ const LexiMentisLanding = () => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
-      containerRef.current?.removeChild(renderer.domElement);
-      
-      // Dispose of resources
+      cancelAnimationFrame(animationFrameId); // Proper cleanup of animation frame
+      if (container && container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
       objects.forEach(obj => {
         obj.geometry.dispose();
-        obj.material.dispose();
+        if (Array.isArray(obj.material)) { // Better handling of multi-material objects
+          obj.material.forEach(mat => mat.dispose());
+        } else {
+          obj.material.dispose();
+        }
       });
       renderer.dispose();
     };
   }, []);
-  
+
   return (
     <div className="relative w-full h-screen">
       <div ref={containerRef} className="absolute inset-0" />
-      
       <div 
+        ref={textRef} // Using ref instead of state for opacity
         className="absolute inset-0 flex flex-col items-center justify-center text-white pointer-events-none z-10"
-        style={{ opacity: textOpacity }}
+        style={{ opacity: 0 }}
       >
         {/* No LexiMentis text here since it will be formed by the documents */}
         <div className="mt-64 text-center"> {/* Increased top margin to accommodate higher logo */}

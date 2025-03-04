@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
-import LandingPage from './components/landing/LandingPage';
+import LandingPage from './components/landing/leximentis-landing';
 import HowItWorksPage from './pages/HowItWorks';
 import DemoPage from './pages/AIDemo';
 import BookingPage from './pages/BookingCalendar';
