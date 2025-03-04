@@ -8,8 +8,8 @@ const FIX_DEPTH_SORT_DELAY = 3000;
 const ORDERED_PHASE_DELAY = 4000;
 
 // Custom interface for Material with dispose method
-interface DisposableMaterial {
-  map?: { dispose: () => void };
+interface Material extends THREE.Material {
+  map?: THREE.Texture;
   dispose: () => void;
 }
 
@@ -555,13 +555,15 @@ const LexiMentisLanding = () => {
         
         if (Array.isArray(obj.material)) {
           obj.material.forEach(mat => {
-            // Safely dispose of material and its textures
-            if (mat.map) mat.map.dispose();
+            // Cast to your custom Material interface
+            const typedMat = mat as Material;
+            if (typedMat.map) typedMat.map.dispose();
             mat.dispose();
           });
         } else if (obj.material) {
-          // Safely dispose of material and its textures
-          if (obj.material.map) obj.material.map.dispose();
+          // Cast to your custom Material interface
+          const typedMat = obj.material as Material;
+          if (typedMat.map) typedMat.map.dispose();
           obj.material.dispose();
         }
       });
