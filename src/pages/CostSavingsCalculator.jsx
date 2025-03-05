@@ -329,10 +329,16 @@ const CostSavingsCalculator = () => {
               This calculator provides an estimate based on industry averages. Schedule a personalized demo to get an accurate analysis for your specific workflows.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition duration-200">
+              <button 
+                onClick={() => window.location.href = '/booking-calendar'} 
+                className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition duration-200"
+              >
                 Book a Demo Call
               </button>
-              <button className="px-8 py-3 bg-white hover:bg-gray-100 text-blue-600 font-medium rounded-lg shadow border border-blue-200 transition duration-200">
+              <button 
+                onClick={() => window.location.href = '/ai-demo'} 
+                className="px-8 py-3 bg-white hover:bg-gray-100 text-blue-600 font-medium rounded-lg shadow border border-blue-200 transition duration-200"
+              >
                 Try the AI Demo
               </button>
             </div>

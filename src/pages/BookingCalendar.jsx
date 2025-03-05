@@ -1,5 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, Clock, ArrowRight, Check, CalendarDays } from 'lucide-react';
+import calendarService from '../utils/GoogleCalendarService';
 
 const BookingCalendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -8,8 +9,11 @@ const BookingCalendar = () => {
   const [contactInfo, setContactInfo] = useState({ name: '', email: '', company: '', message: '' });
   const [currentStep, setCurrentStep] = useState(1);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [apiError, setApiError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [timeSlots, setTimeSlots] = useState([]);
 
-  // Generate dummy available days for the demo (weekdays only)
+  // Generate available days for the current month (weekdays only)
   const availableDays = useMemo(() => {
     const days = [];
     const tempDate = new Date(currentDate);
@@ -17,8 +21,12 @@ const BookingCalendar = () => {
     const month = tempDate.getMonth();
 
     while (tempDate.getMonth() === month) {
-      if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) { // Skip weekends
-        days.push(new Date(tempDate));
+      // Only consider weekdays (0 = Sunday, 6 = Saturday)
+      if (tempDate.getDay() !== 0 && tempDate.getDay() !== 6) { 
+        // Only consider dates from today forward
+        if (tempDate >= new Date(new Date().setHours(0, 0, 0, 0))) {
+          days.push(new Date(tempDate));
+        }
       }
       tempDate.setDate(tempDate.getDate() + 1);
     }
@@ -26,16 +34,53 @@ const BookingCalendar = () => {
     return days;
   }, [currentDate]);
 
-  // Generate dummy time slots
-  const timeSlots = useMemo(() => ([
-    { id: 1, time: '9:00 AM', available: true },
-    { id: 2, time: '10:00 AM', available: true },
-    { id: 3, time: '11:00 AM', available: true },
-    { id: 4, time: '1:00 PM', available: true },
-    { id: 5, time: '2:00 PM', available: true },
-    { id: 6, time: '3:00 PM', available: true },
-    { id: 7, time: '4:00 PM', available: true }
-  ]), []);
+  // Fetch available time slots when date is selected
+  useEffect(() => {
+    if (selectedDate) {
+      fetchAvailableTimeSlots();
+    }
+  }, [selectedDate]);
+
+  // Initialize Google Calendar API
+  useEffect(() => {
+    const initCalendarApi = async () => {
+      try {
+        await calendarService.initialize();
+      } catch (error) {
+        console.error("Failed to initialize Google Calendar API:", error);
+        setApiError("Failed to connect to calendar service. Please try again later.");
+      }
+    };
+
+    initCalendarApi();
+  }, []);
+
+  // Fetch available time slots from Google Calendar
+  const fetchAvailableTimeSlots = async () => {
+    if (!selectedDate) return;
+    
+    setIsLoading(true);
+    try {
+      const availableSlots = await calendarService.getAvailableSlots(selectedDate);
+      setTimeSlots(availableSlots);
+    } catch (error) {
+      console.error("Failed to fetch time slots:", error);
+      setApiError("Failed to load available times. Please try again later.");
+      
+      // Fallback to dummy time slots
+      setTimeSlots([
+        { id: 1, time: '9:00 AM', available: true },
+        { id: 2, time: '10:00 AM', available: true },
+        { id: 3, time: '11:00 AM', available: true },
+        { id: 4, time: '1:00 PM', available: true },
+        { id: 5, time: '2:00 PM', available: true },
+        { id: 6, time: '3:00 PM', available: true },
+        { id: 7, time: '4:00 PM', available: true }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Helpers for date formatting
   const getDayName = (date) => new Intl.DateTimeFormat('en-US', { weekday: 'short' }).format(date);
@@ -57,7 +102,11 @@ const BookingCalendar = () => {
   };
 
   // Selection handlers
-  const handleDateSelect = (date) => setSelectedDate(date);
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    setSelectedTime(null); // Reset time selection when date changes
+  };
+  
   const handleTimeSelect = (timeSlot) => setSelectedTime(timeSlot);
 
   const handleInputChange = (e) => {
@@ -65,13 +114,24 @@ const BookingCalendar = () => {
     setContactInfo(prev => ({ ...prev, [name]: value }));
   };
 
-  const goToNextStep = () => {
+  // Navigate through booking steps
+  const goToNextStep = async () => {
     if (currentStep === 1 && selectedDate) {
       setCurrentStep(2);
     } else if (currentStep === 2 && selectedTime) {
       setCurrentStep(3);
     } else if (currentStep === 3 && contactInfo.name && contactInfo.email) {
-      setIsConfirmed(true);
+      // Submit the booking to Google Calendar
+      setIsLoading(true);
+      try {
+        await calendarService.createBooking(selectedDate, selectedTime, contactInfo);
+        setIsConfirmed(true);
+      } catch (error) {
+        console.error("Failed to create booking:", error);
+        setApiError("Failed to create your booking. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -136,6 +196,17 @@ const BookingCalendar = () => {
         </div>
         
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 max-w-3xl mx-auto">
+          {/* Display API errors */}
+          {apiError && (
+            <div className="bg-red-50 border-l-4 border-red-400 p-4 m-4">
+              <div className="flex">
+                <div>
+                  <p className="text-red-700">{apiError}</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           {/* Stepper */}
           <div className="px-6 py-4 border-b border-gray-200">
             <div className="flex items-center justify-between">
@@ -168,6 +239,16 @@ const BookingCalendar = () => {
           
           {/* Content Area */}
           <div className="p-6">
+            {/* Loading overlay */}
+            {isLoading && (
+              <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center z-10">
+                <div className="flex flex-col items-center">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                  <p className="mt-3 text-blue-600">Processing your request...</p>
+                </div>
+              </div>
+            )}
+            
             {!isConfirmed ? (
               <>
                 {/* Step 1: Select Date */}
@@ -225,16 +306,22 @@ const BookingCalendar = () => {
                       {timeSlots.map(slot => (
                         <div
                           key={slot.id}
-                          className={`p-3 border rounded-lg cursor-pointer transition-colors
-                            ${selectedTime && selectedTime.id === slot.id ? 'bg-blue-600 text-white border-blue-600' : 'border-gray-200 hover:border-blue-400'}
-                          `}
-                          onClick={() => handleTimeSelect(slot)}
-                          aria-label={`Select ${slot.time}`}
+                          className={`p-3 border rounded-lg transition-colors ${
+                            !slot.available 
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                              : selectedTime && selectedTime.id === slot.id 
+                                ? 'bg-blue-600 text-white border-blue-600' 
+                                : 'border-gray-200 hover:border-blue-400 cursor-pointer'
+                          }`}
+                          onClick={() => slot.available && handleTimeSelect(slot)}
+                          aria-label={slot.available ? `Select ${slot.time}` : `${slot.time} - Not available`}
                         >
                           <div className="flex items-center justify-between">
                             <span className="font-medium">{slot.time}</span>
-                            {selectedTime && selectedTime.id === slot.id && (
-                              <Check className="h-5 w-5" />
+                            {slot.available ? (
+                              selectedTime && selectedTime.id === slot.id && <Check className="h-5 w-5" />
+                            ) : (
+                              <span className="text-xs">Unavailable</span>
                             )}
                           </div>
                         </div>
@@ -327,7 +414,12 @@ const BookingCalendar = () => {
                 {/* Navigation buttons */}
                 <div className="mt-8 flex justify-between">
                   {currentStep > 1 ? (
-                    <button onClick={goToPrevStep} className="px-4 py-2 text-gray-600 hover:text-gray-800" aria-label="Go back">
+                    <button 
+                      onClick={goToPrevStep} 
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800" 
+                      aria-label="Go back"
+                      disabled={isLoading}
+                    >
                       Back
                     </button>
                   ) : (
@@ -337,22 +429,24 @@ const BookingCalendar = () => {
                   <button
                     onClick={goToNextStep}
                     disabled={
+                      isLoading ||
                       (currentStep === 1 && !selectedDate) ||
                       (currentStep === 2 && !selectedTime) ||
                       (currentStep === 3 && (!contactInfo.name || !contactInfo.email))
                     }
                     className={`px-6 py-2 rounded-lg flex items-center 
-                      ${((currentStep === 1 && !selectedDate) ||
-                         (currentStep === 2 && !selectedTime) ||
-                         (currentStep === 3 && (!contactInfo.name || !contactInfo.email)))
+                      ${isLoading || 
+                        (currentStep === 1 && !selectedDate) ||
+                        (currentStep === 2 && !selectedTime) ||
+                        (currentStep === 3 && (!contactInfo.name || !contactInfo.email))
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed' 
                         : 'bg-blue-600 text-white hover:bg-blue-700'
                       }
                     `}
                     aria-label="Continue to next step"
                   >
-                    {currentStep === 3 ? 'Confirm Booking' : 'Continue'}
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    {isLoading ? 'Processing...' : currentStep === 3 ? 'Confirm Booking' : 'Continue'}
+                    {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                   </button>
                 </div>
               </>

@@ -145,6 +145,7 @@ const AIDemo = () => {
                     </button>
                     <button 
                       className="ml-4 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded"
+                      onClick={() => window.location.href = '/booking-calendar'}
                     >
                       Book a Call
                     </button>
@@ -255,7 +256,10 @@ const AIDemo = () => {
             </div>
           </div>
           <div className="mt-6 flex justify-center">
-            <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
+            <button 
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
+              onClick={() => window.location.href = '/booking-calendar'}
+            >
               Book a Full Demo
             </button>
           </div>
