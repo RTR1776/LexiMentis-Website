@@ -12,14 +12,30 @@ const BookingCalendar = () => {
   const [apiError, setApiError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
+  const [calendlyLoaded, setCalendlyLoaded] = useState(false);
 
   // Load Calendly script
   useEffect(() => {
     const script = document.createElement('script');
     script.src = "https://assets.calendly.com/assets/external/widget.js";
     script.async = true;
+    
+    script.onload = () => {
+      console.log("Calendly script loaded successfully");
+      setCalendlyLoaded(true);
+    };
+    
+    script.onerror = () => {
+      console.error("Failed to load Calendly script");
+      setApiError("Failed to load booking system. Please try again later.");
+    };
+    
     document.body.appendChild(script);
-    return () => { document.body.removeChild(script); }
+    return () => { 
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
   }, []);
 
   // Generate available days for the current month (weekdays only)
@@ -155,10 +171,28 @@ const BookingCalendar = () => {
     }
   };
 
-  // Function to open Calendly widget
+  // Function to open Calendly widget with improved configuration
   const openCalendlyWidget = () => {
     if (window.Calendly) {
-      window.Calendly.initPopupWidget({ url: 'https://calendly.com/lj-cox-leximentis' });
+      window.Calendly.initPopupWidget({
+        url: 'https://calendly.com/lj-cox-leximentis/30min',
+        prefill: {
+          name: contactInfo.name,
+          email: contactInfo.email,
+          customAnswers: {
+            a1: contactInfo.company || 'Not provided',
+            a2: contactInfo.message || 'No specific questions'
+          }
+        },
+        utm: {
+          utmSource: 'Website',
+          utmMedium: 'Direct',
+          utmCampaign: 'Booking'
+        }
+      });
+    } else {
+      console.error("Calendly widget not loaded");
+      setApiError("Booking system is not available. Please try again later.");
     }
   };
 
@@ -214,6 +248,17 @@ const BookingCalendar = () => {
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Schedule a personalized demo to see how our AI Workers Comp Assistant can transform your practice and reduce administrative burden.
           </p>
+          
+          {/* Add a prominent Calendly button at the top */}
+          <button
+            onClick={openCalendlyWidget}
+            className="mt-6 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 inline-flex items-center"
+            disabled={!calendlyLoaded}
+          >
+            <CalendarDays className="mr-2 h-5 w-5" />
+            Quick Schedule with Calendly
+            {!calendlyLoaded && <span className="ml-2 animate-pulse">Loading...</span>}
+          </button>
         </div>
         
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 max-w-3xl mx-auto">
@@ -277,6 +322,22 @@ const BookingCalendar = () => {
                   <div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-4">Select a Date</h3>
                     
+                    {/* Option to use Calendly instead */}
+                    <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                      <p className="text-blue-800 mb-3">
+                        Prefer a simpler booking experience? Use our Calendly integration.
+                      </p>
+                      <button 
+                        onClick={openCalendlyWidget}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                        disabled={!calendlyLoaded}
+                      >
+                        <CalendarDays className="mr-2 h-4 w-4" />
+                        Open Calendly Scheduler
+                        {!calendlyLoaded && <span className="ml-2 animate-pulse">Loading...</span>}
+                      </button>
+                    </div>
+                    
                     {/* Month navigation */}
                     <div className="flex items-center justify-between mb-4">
                       <button onClick={goToPrevMonth} className="p-2 rounded-full hover:bg-gray-100" aria-label="Previous month">
@@ -322,6 +383,22 @@ const BookingCalendar = () => {
                   <div>
                     <h3 className="text-xl font-semibold text-gray-800 mb-4">Select a Time</h3>
                     <p className="text-gray-600 mb-6">{selectedDate && `${getDayName(selectedDate)}, ${formatDate(selectedDate)}`}</p>
+                    
+                    {/* Option to use Calendly instead */}
+                    <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                      <p className="text-blue-800 mb-3">
+                        See more time slots by using our Calendly integration.
+                      </p>
+                      <button 
+                        onClick={openCalendlyWidget}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                        disabled={!calendlyLoaded}
+                      >
+                        <CalendarDays className="mr-2 h-4 w-4" />
+                        View More Available Times
+                        {!calendlyLoaded && <span className="ml-2 animate-pulse">Loading...</span>}
+                      </button>
+                    </div>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
                       {timeSlots.map(slot => (
@@ -428,6 +505,21 @@ const BookingCalendar = () => {
                           placeholder="Any specific questions or areas of interest? (optional)"
                         />
                       </div>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                      <p className="text-blue-800 mb-3 text-center">
+                        Prefer a simpler booking process?
+                      </p>
+                      <button 
+                        onClick={openCalendlyWidget}
+                        className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center justify-center"
+                        disabled={!calendlyLoaded}
+                      >
+                        <CalendarDays className="mr-2 h-4 w-4" />
+                        Book Instantly with Calendly
+                        {!calendlyLoaded && <span className="ml-2 animate-pulse">Loading...</span>}
+                      </button>
                     </div>
                   </div>
                 )}
