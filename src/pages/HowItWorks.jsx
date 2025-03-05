@@ -3,11 +3,11 @@ import { Database, FileText, Brain, Cpu, ClipboardCheck, MessageSquare } from 'l
 
 const HowItWorks = () => {
   return (
-    <div className="bg-gray-50 py-20">
+    <div className="bg-gray-50 dark:bg-gray-900 py-20">
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">How Our AI Workers Comp System Works</h2>
-          <p className="text-lg text-gray-600">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">How Our AI Workers Comp System Works</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
             Powered by advanced Retrieval-Augmented Generation (RAG) technology and fine-tuned LLMs specifically for Kansas and Missouri Workers Compensation law.
           </p>
         </div>

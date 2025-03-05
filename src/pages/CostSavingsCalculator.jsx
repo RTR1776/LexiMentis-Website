@@ -118,11 +118,11 @@ const CostSavingsCalculator = () => {
   };
 
   return (
-    <div className="bg-white py-16">
+    <div className="bg-white dark:bg-gray-800 py-16">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Workers Compensation Cost Savings Calculator</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">Workers Compensation Cost Savings Calculator</h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
             See how much your firm or organization could save by implementing our AI Workers Compensation Assistant.
           </p>
         </div>
@@ -323,7 +323,7 @@ const CostSavingsCalculator = () => {
         </div>
         
         <div className="mt-16 max-w-3xl mx-auto text-center">
-          <div className="bg-blue-50 rounded-xl p-8 shadow-md border border-blue-100">
+          <div className="bg-blue-50 dark:bg-blue-900 rounded-xl p-8 shadow-md border border-blue-100 dark:border-blue-700">
             <h3 className="text-2xl font-bold text-gray-900 mb-3">Ready to See Your Actual Savings?</h3>
             <p className="text-lg text-gray-600 mb-6">
               This calculator provides an estimate based on industry averages. Schedule a personalized demo to get an accurate analysis for your specific workflows.

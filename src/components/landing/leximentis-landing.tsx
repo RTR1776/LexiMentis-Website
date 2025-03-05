@@ -34,9 +34,15 @@ const LexiMentisLanding = () => {
     // Store a reference to the current container for cleanup
     const container = containerRef.current;
     
-    // Scene setup with black background for dramatic effect
+    // Scene setup - use dark background that works with both dark/light modes
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x000000); // Pure black background
+    
+    // Check if we're in dark mode by checking for a dark-mode class or data attribute
+    // This assumes your app applies a class/attribute to the HTML or body element
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    
+    // Set background color based on theme
+    scene.background = new THREE.Color(isDarkMode ? 0x111827 : 0xf3f4f6); // dark:bg-gray-900 or bg-gray-100
     
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -77,8 +83,8 @@ const LexiMentisLanding = () => {
       const context = canvas.getContext('2d');
       if (!context) return null;
       
-      // Use a very dark background to make the letters stand out more
-      context.fillStyle = '#111111';
+      // Use background color based on theme
+      context.fillStyle = isDarkMode ? '#111111' : '#333333';
       context.fillRect(0, 0, 512, 512);
       
       // Create very bright gold metallic gradient for text
@@ -518,6 +524,25 @@ const LexiMentisLanding = () => {
     
     window.addEventListener('resize', handleResize);
     
+    // Listen for theme changes
+    const handleThemeChange = () => {
+      const isDarkMode = document.documentElement.classList.contains('dark');
+      if (scene) {
+        scene.background = new THREE.Color(isDarkMode ? 0x111827 : 0xf3f4f6); // Update scene background
+      }
+    };
+    
+    // Add mutation observer to detect theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          handleThemeChange();
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+    
     // Cleanup
     return () => {
       // Set mounted flag to false to prevent further updates
@@ -531,6 +556,7 @@ const LexiMentisLanding = () => {
       
       // Remove event listeners
       window.removeEventListener('resize', handleResize);
+      observer.disconnect(); // Stop observing theme changes
       
       // Clean up THREE.js resources
       if (container && renderer && renderer.domElement) {
@@ -576,8 +602,9 @@ const LexiMentisLanding = () => {
     };
   }, []);
 
+  // Use theme-aware classes instead of hard-coded bg-black
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden">
+    <div className="relative w-full h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
       <div ref={containerRef} className="absolute inset-0" />
       
       {/* Add explicit LexiMentis text overlay that will fade in */}
@@ -595,7 +622,7 @@ const LexiMentisLanding = () => {
       {/* Tagline and button */}
       <div 
         ref={textRef}
-        className="absolute inset-0 flex flex-col items-center justify-center text-white pointer-events-none z-20"
+        className="absolute inset-0 flex flex-col items-center justify-center text-gray-800 dark:text-white pointer-events-none z-20"
         style={{ opacity: 0 }}
       >
         <div className="mt-80 text-center"> {/* Increased top margin for better spacing */}
@@ -605,7 +632,7 @@ const LexiMentisLanding = () => {
           
           {animationPhase === 'ordered' && (
             <div className="mt-20 transition-opacity duration-500"> {/* Increased spacing */}
-              <p className="text-xl mb-12 max-w-2xl mx-auto text-gray-300">
+              <p className="text-xl mb-12 max-w-2xl mx-auto text-gray-700 dark:text-gray-300">
                 Leveraging AI to streamline workers' compensation legal workflows
               </p>
               
