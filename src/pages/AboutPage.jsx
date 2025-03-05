@@ -67,7 +67,7 @@ const AboutPage = () => {
                 
                 <div className="prose prose-lg dark:prose-invert max-w-none text-gray-600 dark:text-gray-300">
                   <p>
-                    With over 17 years of experience in legal operations and technology, I've dedicated my career to transforming how legal work gets done. My journey has taken me from practicing law at prestigious firms like Shook Hardy & Bacon to overseeing $500M+ in legal spend as Director of Legal Invoice Review at AIG.
+                    With over 20 years of experience in legal operations and technology, I've dedicated my career to transforming how legal work gets done. My journey has taken me from practicing law at prestigious firms like Shook Hardy & Bacon to overseeing $500M+ in legal spend as Director of Legal Invoice Review at AIG.
                   </p>
                   <p>
                     Throughout my career, I've consistently identified opportunities to optimize legal processes, reduce costs, and improve outcomes. Now, I'm combining my deep legal expertise with cutting-edge AI technology to revolutionize workers compensation practice in Kansas.
@@ -79,14 +79,14 @@ const AboutPage = () => {
               </div>
               
               <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Why Kansas Workers Compensation?</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Why Kansas and Missouri Workers Compensation?</h3>
                 
                 <div className="prose prose-lg dark:prose-invert max-w-none text-gray-600 dark:text-gray-300">
                   <p>
-                    Kansas Workers Compensation law presents a unique opportunity for AI transformation. It's a form-driven specialty that requires consistent processes across similar cases. Many tasks currently handled by paralegals at significant cost can be automated through smart application of AI technology.
+                   Workers Compensation law presents a unique opportunity for AI transformation. It's a form-driven specialty that requires consistent processes across similar cases. Many tasks currently handled by paralegals at significant cost can be automated through smart application of AI technology.
                   </p>
                   <p>
-                    By focusing first on Kansas, we can build a sophisticated system with deep expertise in one jurisdiction before expanding to others. This focused approach ensures our AI delivers truly valuable, reliable results rather than superficial assistance.
+                    By focusing first on Kansas and Missouri, we can build a sophisticated system with deep expertise in one jurisdiction before expanding to others. This focused approach ensures our AI delivers truly valuable, reliable results rather than superficial assistance.
                   </p>
                 </div>
               </div>

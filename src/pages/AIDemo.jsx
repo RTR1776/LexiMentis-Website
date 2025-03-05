@@ -73,7 +73,7 @@ const AIDemo = () => {
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen py-12">
       <div className="container mx-auto px-4 max-w-4xl">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 mt-8">
           {/* Header */}
           <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-blue-50 dark:bg-blue-900 flex flex-col sm:flex-row justify-between items-center">
             <div>
