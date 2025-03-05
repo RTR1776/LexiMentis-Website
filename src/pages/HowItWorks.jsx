@@ -14,7 +14,7 @@ const HowItWorks = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Step 1 */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md border border-gray-100 dark:border-gray-700 flex flex-col">
             <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center mb-6">
               <Database className="h-6 w-6 text-blue-600" />
             </div>
@@ -26,7 +26,7 @@ const HowItWorks = () => {
           </div>
           
           {/* Step 2 */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md border border-gray-100 dark:border-gray-700 flex flex-col">
             <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center mb-6">
               <FileText className="h-6 w-6 text-blue-600" />
             </div>
@@ -38,7 +38,7 @@ const HowItWorks = () => {
           </div>
           
           {/* Step 3 */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md border border-gray-100 dark:border-gray-700 flex flex-col">
             <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center mb-6">
               <Brain className="h-6 w-6 text-blue-600" />
             </div>
@@ -50,7 +50,7 @@ const HowItWorks = () => {
           </div>
           
           {/* Step 4 */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md border border-gray-100 dark:border-gray-700 flex flex-col">
             <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center mb-6">
               <Cpu className="h-6 w-6 text-blue-600" />
             </div>
@@ -62,7 +62,7 @@ const HowItWorks = () => {
           </div>
           
           {/* Step 5 */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md border border-gray-100 dark:border-gray-700 flex flex-col">
             <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center mb-6">
               <ClipboardCheck className="h-6 w-6 text-blue-600" />
             </div>
@@ -74,7 +74,7 @@ const HowItWorks = () => {
           </div>
           
           {/* Step 6 */}
-          <div className="bg-white rounded-xl p-8 shadow-md border border-gray-100 flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-md border border-gray-100 dark:border-gray-700 flex flex-col">
             <div className="h-14 w-14 rounded-full bg-blue-100 flex items-center justify-center mb-6">
               <MessageSquare className="h-6 w-6 text-blue-600" />
             </div>
@@ -87,7 +87,7 @@ const HowItWorks = () => {
         </div>
         
         <div className="mt-16 text-center">
-          <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition duration-200">
+          <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition duration-200">
             See the AI in Action
           </button>
         </div>

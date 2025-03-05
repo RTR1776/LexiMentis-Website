@@ -13,6 +13,15 @@ const BookingCalendar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [timeSlots, setTimeSlots] = useState([]);
 
+  // Load Calendly script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = "https://assets.calendly.com/assets/external/widget.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => { document.body.removeChild(script); }
+  }, []);
+
   // Generate available days for the current month (weekdays only)
   const availableDays = useMemo(() => {
     const days = [];
@@ -124,9 +133,14 @@ const BookingCalendar = () => {
       // Submit the booking to Google Calendar
       setIsLoading(true);
       try {
-        await calendarService.createBooking(selectedDate, selectedTime, contactInfo);
+        // Pass organizerEmail (lj.cox@leximentis.com) along with contact info
+        await calendarService.createBooking(selectedDate, selectedTime, {
+          ...contactInfo,
+          organizerEmail: "lj.cox@leximentis.com"
+        });
         setIsConfirmed(true);
       } catch (error) {
+        // ...existing error handling...
         console.error("Failed to create booking:", error);
         setApiError("Failed to create your booking. Please try again later.");
       } finally {
@@ -138,6 +152,13 @@ const BookingCalendar = () => {
   const goToPrevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+    }
+  };
+
+  // Function to open Calendly widget
+  const openCalendlyWidget = () => {
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ url: 'https://calendly.com/lj-cox-leximentis' });
     }
   };
 
@@ -186,7 +207,7 @@ const BookingCalendar = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen py-12">
+    <div className="bg-white dark:bg-gray-900 min-h-screen py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">Book a Demo Call</h2>
@@ -449,6 +470,17 @@ const BookingCalendar = () => {
                     {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                   </button>
                 </div>
+
+                {currentStep === 3 && !isConfirmed && (
+                  <div className="mt-4 text-center">
+                    <button
+                      onClick={openCalendlyWidget}
+                      className="px-6 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                    >
+                      Book via Calendly
+                    </button>
+                  </div>
+                )}
               </>
             ) : (
               // Confirmation screen
@@ -476,7 +508,7 @@ const BookingCalendar = () => {
                   </ul>
                 </div>
                 <button
-                  className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition duration-200"
+                  className="px-6 py-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 font-medium rounded-lg transition duration-200"
                   onClick={() => window.location.href = '/'}
                 >
                   Return to Homepage

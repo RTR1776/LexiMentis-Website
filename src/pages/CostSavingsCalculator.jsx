@@ -118,7 +118,7 @@ const CostSavingsCalculator = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 py-16">
+    <div className="bg-white dark:bg-gray-900 py-16">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">Workers Compensation Cost Savings Calculator</h2>

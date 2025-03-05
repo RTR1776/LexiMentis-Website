@@ -255,9 +255,9 @@ const AIDemo = () => {
               </p>
             </div>
           </div>
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
             <button 
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
               onClick={() => window.location.href = '/booking-calendar'}
             >
               Book a Full Demo

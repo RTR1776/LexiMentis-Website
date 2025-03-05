@@ -1,5 +1,6 @@
 import React from 'react';
 import { Award, Book, Briefcase, CheckCircle, FileText, Gem, Star, Users } from 'lucide-react';
+import profilePic from '../assets/profilePic.jpg'; // add this import line
 
 const AboutPage = () => {
   return (
@@ -9,10 +10,10 @@ const AboutPage = () => {
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Meet the Expert Behind Kansas WC AI
+              Meet the Expert Behind LexiMentis
             </h1>
             <p className="text-xl text-blue-100 mb-8">
-              Combining 17+ years of deep legal expertise with cutting-edge AI technology to transform workers compensation practice.
+              Combining 20+ years of deep legal expertise with cutting-edge AI technology to transform workers compensation practice.
             </p>
           </div>
         </div>
@@ -25,7 +26,7 @@ const AboutPage = () => {
             {/* Column 1: Profile Image & Stats */}
             <div className="md:col-span-1">
               <div className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-xl mb-6 overflow-hidden">
-                {/* Profile image placeholder - replace with actual image */}
+                <img src={profilePic} alt="Profile" className="object-cover w-full h-full" />
                 <div className="h-full w-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center">
                   <span className="text-3xl font-bold text-white">LJ</span>
                 </div>

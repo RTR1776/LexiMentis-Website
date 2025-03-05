@@ -37,8 +37,8 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-2">
-              <li className="text-secondary-300">Email: info@leximentis.ai</li>
-              <li className="text-secondary-300">Phone: (123) 456-7890</li>
+              <li className="text-secondary-300">Email: lj.cox@leximentis.com</li>
+              <li className="text-secondary-300">Phone: (913) 523-6061</li>
               <li><Link to="/book" className="btn btn-accent mt-4">Book a Demo</Link></li>
             </ul>
           </div>
