@@ -25,26 +25,7 @@ const BookingCalendar = () => {
       setCalendlyLoaded(true);
       setIsLoading(false);
       
-      // Initialize inline widget after script loads
-      if (calendlyRef.current && window.Calendly) {
-        try {
-          window.Calendly.initInlineWidget({
-            url: 'https://calendly.com/lj-cox-leximentis/30min',
-            parentElement: calendlyRef.current,
-            prefill: {
-              name: contactInfo.name,
-              email: contactInfo.email,
-              customAnswers: {
-                a1: contactInfo.company || '',
-                a2: contactInfo.message || ''
-              }
-            }
-          });
-        } catch (error) {
-          console.error("Error initializing inline widget:", error);
-          setApiError("Failed to load the calendar. Please try again later.");
-        }
-      }
+      // We'll initialize the widget in a separate useEffect to handle contactInfo changes
     };
     
     script.onerror = () => {
@@ -61,6 +42,44 @@ const BookingCalendar = () => {
     };
   }, []);
 
+  // Initialize or re-initialize Calendly when contactInfo changes
+  useEffect(() => {
+    if (!calendlyLoaded || !calendlyRef.current || !window.Calendly) return;
+    
+    try {
+      // Clear the existing widget first
+      while (calendlyRef.current.firstChild) {
+        calendlyRef.current.removeChild(calendlyRef.current.firstChild);
+      }
+      
+      window.Calendly.initInlineWidget({
+        url: 'https://calendly.com/lj-cox-leximentis/30min',
+        parentElement: calendlyRef.current,
+        prefill: {
+          name: contactInfo.name,
+          email: contactInfo.email,
+          customAnswers: {
+            // Make sure these match your actual Calendly custom questions
+            a1: contactInfo.company,
+            a2: contactInfo.message
+          }
+        },
+        // Add Calendly hooks to debug any issues
+        callbacks: {
+          ready: () => {
+            console.log("Calendly widget is ready");
+          },
+          eventScheduled: () => {
+            console.log("Booking was scheduled");
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Error initializing inline widget:", error);
+      setApiError("Failed to load the calendar. Please try again later.");
+    }
+  }, [calendlyLoaded, contactInfo]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setContactInfo(prev => ({ ...prev, [name]: value }));
@@ -73,8 +92,9 @@ const BookingCalendar = () => {
         window.Calendly.initPopupWidget({
           url: 'https://calendly.com/lj-cox-leximentis/30min',
           prefill: {
-            name: contactInfo.name || '',
-            email: contactInfo.email || '',
+            name: contactInfo.name,
+            email: contactInfo.email,
+            // Make sure these match your actual Calendly custom field keys
             customAnswers: {
               a1: contactInfo.company || 'Not provided',
               a2: contactInfo.message || 'No specific questions'
@@ -86,7 +106,12 @@ const BookingCalendar = () => {
             utmCampaign: 'Booking'
           }
         });
-        console.log("Calendly widget initialized");
+        console.log("Calendly widget initialized with data:", {
+          name: contactInfo.name,
+          email: contactInfo.email,
+          company: contactInfo.company,
+          message: contactInfo.message
+        });
       } catch (error) {
         console.error("Error initializing Calendly widget:", error);
         setApiError("There was an error opening the booking system. Please try refreshing the page.");
@@ -111,8 +136,8 @@ const BookingCalendar = () => {
             window.Calendly.initPopupWidget({
               url: 'https://calendly.com/lj-cox-leximentis/30min',
               prefill: {
-                name: contactInfo.name || '',
-                email: contactInfo.email || '',
+                name: contactInfo.name,
+                email: contactInfo.email,
                 customAnswers: {
                   a1: contactInfo.company || '',
                   a2: contactInfo.message || ''
