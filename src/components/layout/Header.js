@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useTheme } from '../../context/ThemeContext';
+import { Moon, Sun } from 'lucide-react';
 
 const Header = ({ scrolled }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { darkMode, toggleDarkMode } = useTheme();
   
   const navItems = [
     { name: 'Home', path: '/' },
@@ -16,12 +19,18 @@ const Header = ({ scrolled }) => {
   return (
     <header 
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
+        scrolled 
+          ? darkMode 
+            ? 'bg-secondary-800 shadow-md shadow-secondary-900/20 py-2' 
+            : 'bg-white shadow-md py-2'
+          : darkMode 
+            ? 'bg-transparent py-4' 
+            : 'bg-transparent py-4'
       }`}
     >
       <div className="container-custom flex items-center justify-between">
         <Link to="/" className="flex items-center">
-          <span className="text-2xl font-bold text-primary-600">LexiMentis</span>
+          <span className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-primary-600'}`}>LexiMentis</span>
         </Link>
         
         {/* Desktop Navigation */}
@@ -32,8 +41,11 @@ const Header = ({ scrolled }) => {
               to={item.path}
               className={({ isActive }) =>
                 `text-lg transition-colors hover:text-primary-600 ${
-                  isActive ? 'text-primary-600 font-medium' : 
-                  scrolled ? 'text-secondary-800' : 'text-secondary-800'
+                  isActive 
+                    ? 'text-primary-600 font-medium' 
+                    : darkMode 
+                      ? 'text-white' 
+                      : 'text-secondary-800'
                 }`
               }
               end={item.path === '/'}
@@ -43,29 +55,55 @@ const Header = ({ scrolled }) => {
           ))}
         </nav>
         
-        <div className="hidden md:block">
-          <Link to="/book" className="btn btn-primary">
+        <div className="hidden md:flex items-center space-x-4">
+          <button
+            onClick={toggleDarkMode}
+            className={`p-2 rounded-full transition-colors ${
+              darkMode 
+                ? 'bg-secondary-700 hover:bg-secondary-600 text-white' 
+                : 'bg-gray-100 hover:bg-gray-200 text-secondary-800'
+            }`}
+            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
+
+          <Link to="/book" className={`btn ${darkMode ? 'bg-primary-500 hover:bg-primary-600 text-white' : 'btn-primary'}`}>
             Book a Demo
           </Link>
         </div>
         
         {/* Mobile Menu Button */}
-        <button
-          type="button"
-          className="md:hidden text-secondary-800"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? (
-            <XMarkIcon className="h-6 w-6" />
-          ) : (
-            <Bars3Icon className="h-6 w-6" />
-          )}
-        </button>
+        <div className="md:hidden flex items-center space-x-2">
+          <button
+            onClick={toggleDarkMode}
+            className={`p-1.5 rounded-full transition-colors ${
+              darkMode 
+                ? 'bg-secondary-700 hover:bg-secondary-600 text-white' 
+                : 'bg-gray-100 hover:bg-gray-200 text-secondary-800'
+            }`}
+            aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          </button>
+
+          <button
+            type="button"
+            className={darkMode ? "text-white" : "text-secondary-800"}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <XMarkIcon className="h-6 w-6" />
+            ) : (
+              <Bars3Icon className="h-6 w-6" />
+            )}
+          </button>
+        </div>
       </div>
       
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white shadow-lg absolute w-full">
+        <div className={`md:hidden ${darkMode ? 'bg-secondary-800' : 'bg-white'} shadow-lg absolute w-full`}>
           <div className="px-4 pt-2 pb-4 space-y-1">
             {navItems.map((item) => (
               <NavLink
@@ -73,7 +111,13 @@ const Header = ({ scrolled }) => {
                 to={item.path}
                 className={({ isActive }) =>
                   `block px-3 py-2 rounded-md ${
-                    isActive ? 'bg-primary-50 text-primary-600' : 'text-secondary-800'
+                    isActive 
+                      ? darkMode 
+                        ? 'bg-secondary-700 text-white' 
+                        : 'bg-primary-50 text-primary-600' 
+                      : darkMode 
+                        ? 'text-white hover:bg-secondary-700' 
+                        : 'text-secondary-800 hover:bg-gray-100'
                   }`
                 }
                 onClick={() => setMobileMenuOpen(false)}
@@ -84,7 +128,11 @@ const Header = ({ scrolled }) => {
             ))}
             <Link
               to="/book"
-              className="block w-full text-center btn btn-primary mt-4"
+              className={`block w-full text-center mt-4 ${
+                darkMode 
+                  ? 'bg-primary-500 hover:bg-primary-600 text-white py-2 px-4 rounded-lg'
+                  : 'btn btn-primary'
+              }`}
               onClick={() => setMobileMenuOpen(false)}
             >
               Book a Demo
