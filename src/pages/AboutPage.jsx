@@ -1,6 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Award, Book, Briefcase, CheckCircle, FileText, Gem, Star, Users } from 'lucide-react';
-import profilePic from '../assets/profilePic.jpg'; // add this import line
+import profilePic from '../assets/profilePic.jpg'; 
 
 const AboutPage = () => {
   return (
@@ -37,15 +38,15 @@ const AboutPage = () => {
                   <Briefcase className="h-5 w-5 text-blue-500 dark:text-blue-400 mr-3" />
                   <div>
                     <h3 className="font-semibold text-gray-800 dark:text-gray-200">Experience</h3>
-                    <p className="text-gray-600 dark:text-gray-400">17+ Years in Legal Operations</p>
+                    <p className="text-gray-600 dark:text-gray-400">20+ Years in Legal Operations</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center p-4 bg-green-50 dark:bg-green-900/30 rounded-lg">
                   <FileText className="h-5 w-5 text-green-500 dark:text-green-400 mr-3" />
                   <div>
-                    <h3 className="font-semibold text-gray-800 dark:text-gray-200">Cases Managed</h3>
-                    <p className="text-gray-600 dark:text-gray-400">500+ Law Firms, $500M+ Legal Spend</p>
+                    <h3 className="font-semibold text-gray-800 dark:text-gray-200">Legal Spend Managed</h3>
+                    <p className="text-gray-600 dark:text-gray-400">1,000+ Law Firms, $500M+ Legal Spend</p>
                   </div>
                 </div>
                 
@@ -54,6 +55,7 @@ const AboutPage = () => {
                   <div>
                     <h3 className="font-semibold text-gray-800 dark:text-gray-200">Education</h3>
                     <p className="text-gray-600 dark:text-gray-400">J.D., Washington University</p>
+                    <p className="text-gray-600 dark:text-gray-400">B.S., University of Missouri</p>
                   </div>
                 </div>
               </div>
@@ -70,7 +72,7 @@ const AboutPage = () => {
                     With over 20 years of experience in legal operations and technology, I've dedicated my career to transforming how legal work gets done. My journey has taken me from practicing law at prestigious firms like Shook Hardy & Bacon to overseeing $500M+ in legal spend as Director of Legal Invoice Review at AIG.
                   </p>
                   <p>
-                    Throughout my career, I've consistently identified opportunities to optimize legal processes, reduce costs, and improve outcomes. Now, I'm combining my deep legal expertise with cutting-edge AI technology to revolutionize workers compensation practice in Kansas.
+                    Throughout my career, I've consistently identified opportunities to optimize legal processes, reduce costs, and improve outcomes. Now, I'm combining my deep legal expertise with cutting-edge AI technology to revolutionize workers compensation practice in Missouri and Kansas.
                   </p>
                   <p>
                     My unique background bridges the gap between legal strategy and technology implementation. I understand firsthand the challenges that law firms, insurance companies, and businesses face in managing workers compensation cases efficiently while maintaining quality and compliance.
@@ -83,10 +85,10 @@ const AboutPage = () => {
                 
                 <div className="prose prose-lg dark:prose-invert max-w-none text-gray-600 dark:text-gray-300">
                   <p>
-                   Workers Compensation law presents a unique opportunity for AI transformation. It's a form-driven specialty that requires consistent processes across similar cases. Many tasks currently handled by paralegals at significant cost can be automated through smart application of AI technology.
+                   Workers Compensation law presents a unique opportunity for AI transformation. It's a statute and form-driven specialty that requires consistent processes across similar cases. Many tasks currently handled by paralegals at significant cost can be automated through smart application of AI technology.
                   </p>
                   <p>
-                    By focusing first on Kansas and Missouri, we can build a sophisticated system with deep expertise in one jurisdiction before expanding to others. This focused approach ensures our AI delivers truly valuable, reliable results rather than superficial assistance.
+                    By focusing first on Kansas and Missouri, we can build a sophisticated system with deep expertise in two jurisdictions before expanding to others. This focused approach ensures our AI delivers truly valuable, reliable results rather than superficial assistance.
                   </p>
                 </div>
               </div>
@@ -236,13 +238,16 @@ const AboutPage = () => {
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-3">Kansas Expertise</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Specialized knowledge of Kansas-specific workers compensation regulations, procedures, and precedents, combined with a comprehensive database of decisions and forms.
+                  Specialized knowledge of Missouri and Kansas specific workers compensation regulations, procedures, and precedents, combined with a comprehensive database of decisions and forms.
                 </p>
               </div>
               <div>
-                <button className="mt-4 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200">
+                <Link 
+                  to="/booking-calendar"
+                  className="mt-4 w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
+                >
                   Book a Consultation
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -256,14 +261,14 @@ const AboutPage = () => {
           
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-5 lg:left-1/2 h-full w-0.5 bg-blue-100 dark:bg-blue-900 transform -translate-x-1/2"></div>
+            <div className="absolute left-4 lg:left-1/2 h-full w-0.5 bg-blue-100 dark:bg-blue-900 transform -translate-x-1/2"></div>
             
             <div className="space-y-12">
               {/* 2024 - Present */}
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="lg:w-1/2 lg:pr-16 text-right hidden lg:block">
                   <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">Legal Operations & AI Consultant</h3>
-                  <p className="text-blue-600 dark:text-blue-400 font-medium">Self-Employed</p>
+                  <p className="text-blue-600 dark:text-blue-400 font-medium">LexiMentis</p>
                   <p className="text-gray-600 dark:text-gray-300 mt-2">
                     Designing AI-driven workflows and implementing RAG pipelines for specialized legal tasks.
                   </p>
@@ -275,7 +280,7 @@ const AboutPage = () => {
                 
                 <div className="lg:w-1/2 lg:pl-16 block lg:hidden mt-4 lg:mt-0">
                   <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">Legal Operations & AI Consultant</h3>
-                  <p className="text-blue-600 dark:text-blue-400 font-medium">Self-Employed</p>
+                  <p className="text-blue-600 dark:text-blue-400 font-medium">LexiMentis</p>
                   <p className="text-gray-600 dark:text-gray-300 mt-2">
                     Designing AI-driven workflows and implementing RAG pipelines for specialized legal tasks.
                   </p>
@@ -386,12 +391,18 @@ const AboutPage = () => {
             Schedule a personalized consultation to see how my expertise and AI solutions can reduce your administrative burden and improve outcomes.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition duration-200">
-              Book a Call
-            </button>
-            <button className="px-8 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-medium rounded-lg shadow border border-blue-200 dark:border-blue-700 transition duration-200">
+            <Link 
+              to="/book"
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition duration-200 inline-block"
+            >
+              Book a Demo
+            </Link>
+            <Link 
+              to="/demo"
+              className="px-8 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-medium rounded-lg shadow border border-blue-200 dark:border-blue-700 transition duration-200 inline-block"
+            >
               Try the AI Demo
-            </button>
+            </Link>
           </div>
         </div>
       </div>
