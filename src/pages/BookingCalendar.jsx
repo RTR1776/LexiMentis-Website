@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Clock, ArrowRight, Check, CalendarDays } from 'lucide-react';
 
 const BookingCalendar = () => {
   const [contactInfo, setContactInfo] = useState({ name: '', email: '', company: '', message: '' });
   const [apiError, setApiError] = useState(null);
   const [calendlyLoaded, setCalendlyLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const calendlyRef = useRef(null);
 
   // Load Calendly script
   useEffect(() => {
@@ -21,11 +23,34 @@ const BookingCalendar = () => {
     script.onload = () => {
       console.log("Calendly script loaded successfully");
       setCalendlyLoaded(true);
+      setIsLoading(false);
+      
+      // Initialize inline widget after script loads
+      if (calendlyRef.current && window.Calendly) {
+        try {
+          window.Calendly.initInlineWidget({
+            url: 'https://calendly.com/lj-cox-leximentis/30min',
+            parentElement: calendlyRef.current,
+            prefill: {
+              name: contactInfo.name,
+              email: contactInfo.email,
+              customAnswers: {
+                a1: contactInfo.company || '',
+                a2: contactInfo.message || ''
+              }
+            }
+          });
+        } catch (error) {
+          console.error("Error initializing inline widget:", error);
+          setApiError("Failed to load the calendar. Please try again later.");
+        }
+      }
     };
     
     script.onerror = () => {
       console.error("Failed to load Calendly script");
       setApiError("Failed to load booking system. Please try again later.");
+      setIsLoading(false);
     };
     
     document.body.appendChild(script);
@@ -69,6 +94,7 @@ const BookingCalendar = () => {
     } else {
       console.error("Calendly widget not loaded");
       setApiError("Loading booking system. Please wait a moment...");
+      setIsLoading(true);
       
       // If script failed to load in useEffect, try again here
       const script = document.createElement('script');
@@ -78,6 +104,7 @@ const BookingCalendar = () => {
       script.onload = () => {
         console.log("Calendly script loaded on demand");
         setCalendlyLoaded(true);
+        setIsLoading(false);
         setTimeout(() => {
           // Try opening again after script loads
           if (window.Calendly) {
@@ -86,6 +113,10 @@ const BookingCalendar = () => {
               prefill: {
                 name: contactInfo.name || '',
                 email: contactInfo.email || '',
+                customAnswers: {
+                  a1: contactInfo.company || '',
+                  a2: contactInfo.message || ''
+                }
               }
             });
           }
@@ -96,23 +127,32 @@ const BookingCalendar = () => {
     }
   };
 
-  // Add option to use Calendly inline
+  // Updated to use the ref instead of rendering a div with data-url
   const renderCalendlyInline = () => {
-    if (calendlyLoaded && typeof window !== 'undefined' && window.Calendly) {
+    if (isLoading) {
       return (
-        <div 
-          className="calendly-inline-widget" 
-          data-url="https://calendly.com/lj-cox-leximentis/30min"
-          style={{ minWidth: '320px', height: '700px' }} 
-        />
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="ml-3 text-blue-600">Loading calendar...</p>
+        </div>
       );
     }
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p className="ml-3 text-blue-600">Loading calendar...</p>
-      </div>
-    );
+    
+    if (apiError) {
+      return (
+        <div className="flex flex-col justify-center items-center h-64">
+          <p className="text-red-600 mb-3">{apiError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700"
+          >
+            Reload Page
+          </button>
+        </div>
+      );
+    }
+    
+    return <div ref={calendlyRef} style={{ minWidth: '320px', height: '700px' }} />;
   };
 
   return (
@@ -128,17 +168,17 @@ const BookingCalendar = () => {
           <button
             onClick={openCalendlyWidget}
             className="mt-6 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 inline-flex items-center"
-            disabled={!calendlyLoaded}
+            disabled={isLoading}
           >
             <CalendarDays className="mr-2 h-5 w-5" />
-            {calendlyLoaded ? "Schedule Your Demo Call" : "Loading Scheduler..."}
-            {!calendlyLoaded && <span className="ml-2 animate-pulse">&bull;&bull;&bull;</span>}
+            {!isLoading ? "Schedule Your Demo Call" : "Loading Scheduler..."}
+            {isLoading && <span className="ml-2 animate-pulse">&bull;&bull;&bull;</span>}
           </button>
         </div>
         
         <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200 max-w-3xl mx-auto">
-          {/* Display API errors */}
-          {apiError && (
+          {/* Display API errors at the top level */}
+          {apiError && !isLoading && (
             <div className="bg-red-50 border-l-4 border-red-400 p-4 m-4">
               <div className="flex">
                 <div>
@@ -152,7 +192,7 @@ const BookingCalendar = () => {
             <h3 className="text-lg font-semibold">Select a time that works for you</h3>
           </div>
           
-          {/* Calendly inline widget */}
+          {/* Calendly inline widget using ref */}
           <div className="p-0">
             {renderCalendlyInline()}
           </div>
@@ -229,7 +269,7 @@ const BookingCalendar = () => {
             <button
               onClick={openCalendlyWidget}
               className="mt-6 w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 inline-flex items-center justify-center"
-              disabled={!calendlyLoaded}
+              disabled={isLoading}
             >
               <CalendarDays className="mr-2 h-5 w-5" />
               Schedule with Your Information
