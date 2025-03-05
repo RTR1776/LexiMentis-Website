@@ -16,6 +16,12 @@ const BookingCalendar = () => {
 
   // Load Calendly script
   useEffect(() => {
+    // Remove any existing Calendly scripts to prevent duplicates
+    const existingScript = document.querySelector('script[src*="calendly.com"]');
+    if (existingScript) {
+      existingScript.remove();
+    }
+    
     const script = document.createElement('script');
     script.src = "https://assets.calendly.com/assets/external/widget.js";
     script.async = true;
@@ -156,7 +162,6 @@ const BookingCalendar = () => {
         });
         setIsConfirmed(true);
       } catch (error) {
-        // ...existing error handling...
         console.error("Failed to create booking:", error);
         setApiError("Failed to create your booking. Please try again later.");
       } finally {
@@ -173,26 +178,51 @@ const BookingCalendar = () => {
 
   // Function to open Calendly widget with improved configuration
   const openCalendlyWidget = () => {
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({
-        url: 'https://calendly.com/lj-cox-leximentis/30min',
-        prefill: {
-          name: contactInfo.name,
-          email: contactInfo.email,
-          customAnswers: {
-            a1: contactInfo.company || 'Not provided',
-            a2: contactInfo.message || 'No specific questions'
+    if (typeof window !== 'undefined' && window.Calendly) {
+      try {
+        window.Calendly.initPopupWidget({
+          url: 'https://calendly.com/lj-cox-leximentis/30min',
+          prefill: {
+            name: contactInfo.name || '',
+            email: contactInfo.email || '',
+            customAnswers: {
+              a1: contactInfo.company || 'Not provided',
+              a2: contactInfo.message || 'No specific questions'
+            }
+          },
+          utm: {
+            utmSource: 'Website',
+            utmMedium: 'Direct',
+            utmCampaign: 'Booking'
           }
-        },
-        utm: {
-          utmSource: 'Website',
-          utmMedium: 'Direct',
-          utmCampaign: 'Booking'
-        }
-      });
+        });
+        console.log("Calendly widget initialized");
+      } catch (error) {
+        console.error("Error initializing Calendly widget:", error);
+        setApiError("There was an error opening the booking system. Please try refreshing the page.");
+      }
     } else {
       console.error("Calendly widget not loaded");
-      setApiError("Booking system is not available. Please try again later.");
+      // If Calendly isn't loaded yet, try loading it again
+      const script = document.createElement('script');
+      script.src = "https://assets.calendly.com/assets/external/widget.js";
+      script.async = true;
+      
+      script.onload = () => {
+        console.log("Calendly script loaded on demand");
+        setCalendlyLoaded(true);
+        setTimeout(() => {
+          // Try opening again after script loads
+          if (window.Calendly) {
+            window.Calendly.initPopupWidget({
+              url: 'https://calendly.com/lj-cox-leximentis/30min'
+            });
+          }
+        }, 1000);
+      };
+      
+      document.body.appendChild(script);
+      setApiError("Loading booking system. Please wait a moment...");
     }
   };
 
@@ -253,11 +283,11 @@ const BookingCalendar = () => {
           <button
             onClick={openCalendlyWidget}
             className="mt-6 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 inline-flex items-center"
-            disabled={!calendlyLoaded}
+            disabled={isLoading}
           >
             <CalendarDays className="mr-2 h-5 w-5" />
-            Quick Schedule with Calendly
-            {!calendlyLoaded && <span className="ml-2 animate-pulse">Loading...</span>}
+            {calendlyLoaded ? "Quick Schedule with Calendly" : "Loading Scheduler..."}
+            {!calendlyLoaded && <span className="ml-2 animate-pulse">&bull;&bull;&bull;</span>}
           </button>
         </div>
         
