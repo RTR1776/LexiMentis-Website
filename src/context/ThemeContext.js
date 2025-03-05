@@ -1,27 +1,35 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
-export function ThemeProvider({ children }) {
-  // Check if user has a preferred theme or use previously stored theme
-  const [darkMode, setDarkMode] = useState(() => {
-    // Check localStorage first
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    // Fall back to system preference
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
+export const ThemeProvider = ({ children }) => {
+  const [darkMode, setDarkMode] = useState(false);
 
-  // Update localStorage and apply theme when it changes
+  // Check for saved theme preference or use system preference
   useEffect(() => {
-    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark', darkMode);
+    const savedTheme = localStorage.getItem('darkMode');
+    if (savedTheme !== null) {
+      setDarkMode(savedTheme === 'true');
+    } else {
+      // Use system preference as default
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setDarkMode(prefersDark);
+    }
+  }, []);
+
+  // Update localStorage when theme changes
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode.toString());
+    // Apply dark mode class to body
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }, [darkMode]);
 
   const toggleDarkMode = () => {
-    setDarkMode(prev => !prev);
+    setDarkMode(prevMode => !prevMode);
   };
 
   return (
@@ -29,8 +37,12 @@ export function ThemeProvider({ children }) {
       {children}
     </ThemeContext.Provider>
   );
-}
+};
 
-export function useTheme() {
-  return useContext(ThemeContext);
-}
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};

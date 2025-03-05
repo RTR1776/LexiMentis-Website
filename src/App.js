@@ -7,21 +7,26 @@ import DemoPage from './pages/AIDemo';
 import BookingPage from './pages/BookingCalendar';
 import CalculatorPage from './pages/CostSavingsCalculator';
 import AboutPage from './pages/AboutPage';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<LandingPage />} />
-          <Route path="how-it-works" element={<HowItWorksPage />} />
-          <Route path="demo" element={<DemoPage />} />
-          <Route path="book" element={<BookingPage />} />
-          <Route path="calculator" element={<CalculatorPage />} />
-          <Route path="about" element={<AboutPage />} />
-        </Route>
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <div className="App">
+        <Router>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<LandingPage />} />
+              <Route path="how-it-works" element={<HowItWorksPage />} />
+              <Route path="demo" element={<DemoPage />} />
+              <Route path="book" element={<BookingPage />} />
+              <Route path="calculator" element={<CalculatorPage />} />
+              <Route path="about" element={<AboutPage />} />
+            </Route>
+          </Routes>
+        </Router>
+      </div>
+    </ThemeProvider>
   );
 }
 
