@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Send, Download, RefreshCw, Info, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom'; // Added import
 
 const AIDemo = () => {
   const [inputValue, setInputValue] = useState('');
@@ -143,12 +144,13 @@ const AIDemo = () => {
                     >
                       Reset Demo
                     </button>
-                    <button 
+                    {/* Changed booking button to Link */}
+                    <Link 
+                      to="/booking-calendar"
                       className="ml-4 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded"
-                      onClick={() => window.location.href = '/booking-calendar'}
                     >
                       Book a Call
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -203,6 +205,7 @@ const AIDemo = () => {
           </form>
         </div>
         
+        {/* Changed booking button to Link */}
         <div className="mt-8 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md border border-gray-200 dark:border-gray-700">
           <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">What You Can Do With the Full Version</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -256,12 +259,12 @@ const AIDemo = () => {
             </div>
           </div>
           <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
-            <button 
+            <Link 
+              to="/booking-calendar"
               className="px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-medium rounded-lg transition duration-200"
-              onClick={() => window.location.href = '/booking-calendar'}
             >
               Book a Full Demo
-            </button>
+            </Link>
           </div>
         </div>
       </div>

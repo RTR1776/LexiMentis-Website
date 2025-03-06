@@ -15,6 +15,7 @@ import {
   Clock,
   Briefcase
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const CostSavingsCalculator = () => {
   const [inputs, setInputs] = useState({
@@ -345,6 +346,26 @@ const CostSavingsCalculator = () => {
                 Try the AI Demo
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* CTA Section */}
+      <div className="py-16 bg-blue-50 dark:bg-blue-900/30">
+        <div className="container mx-auto px-6 max-w-3xl text-center">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            Ready to Transform Your Workers Comp Practice?
+          </h2>
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+            Schedule a personalized consultation to see how my expertise and AI solutions can reduce your administrative burden and improve outcomes.
+          </p>
+          <div className="flex justify-center">
+            <Link 
+              to="/book"
+              className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition duration-200 inline-block"
+            >
+              Book a Demo
+            </Link>
           </div>
         </div>
       </div>

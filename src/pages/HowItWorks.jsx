@@ -1,5 +1,6 @@
 import React from 'react';
 import { Database, FileText, Brain, Cpu, ClipboardCheck, MessageSquare } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const HowItWorks = () => {
   return (

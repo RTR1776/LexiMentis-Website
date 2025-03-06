@@ -261,7 +261,7 @@ const AboutPage = () => {
           
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-4 lg:left-1/2 h-full w-0.5 bg-blue-100 dark:bg-blue-900 transform -translate-x-1/2"></div>
+            <div className="absolute left-5 lg:left-1/2 h-full w-0.5 bg-blue-100 dark:bg-blue-900 transform -translate-x-1/2"></div>
             
             <div className="space-y-12">
               {/* 2024 - Present */}
@@ -390,18 +390,12 @@ const AboutPage = () => {
           <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
             Schedule a personalized consultation to see how my expertise and AI solutions can reduce your administrative burden and improve outcomes.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <div className="flex justify-center">
             <Link 
               to="/book"
               className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-lg transition duration-200 inline-block"
             >
               Book a Demo
-            </Link>
-            <Link 
-              to="/demo"
-              className="px-8 py-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 font-medium rounded-lg shadow border border-blue-200 dark:border-blue-700 transition duration-200 inline-block"
-            >
-              Try the AI Demo
             </Link>
           </div>
         </div>
