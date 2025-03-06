@@ -179,10 +179,10 @@ const AIDemo = () => {
               
               <button 
                 type="submit" 
-                className={`p-2 rounded-full ${
+                className={`p-2 rounded-lg transition-colors ${
                   isProcessing || !inputValue.trim() || showLimitWarning
-                    ? 'text-gray-400 dark:text-gray-600'
-                    : 'text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900'
+                    ? 'text-gray-400 cursor-not-allowed'
+                    : 'text-primary-500 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20'
                 }`}
                 disabled={isProcessing || !inputValue.trim() || showLimitWarning}
               >
@@ -218,10 +218,10 @@ const AIDemo = () => {
               </p>
             </div>
             <div className="flex items-start">
-              <div className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-3 flex-shrink-0">
-                <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-300" />
+              <div className="h-6 w-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mr-3 flex-shrink-0">
+                <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
               </div>
-              <p className="text-gray-700 dark:text-gray-300">
+              <p className="text-secondary-900 dark:text-neutral-200">
                 Auto-complete all standard Kansas and Missouri WC forms
               </p>
             </div>

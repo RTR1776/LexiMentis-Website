@@ -3,17 +3,40 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Brand Colors */
+    --color-primary: #D40000;   /* LexiMentis Red */
+    --color-secondary: #0E0606; /* Charcoal Black */
+    --color-accent: #2C3E50;    /* Slate Blue */
+
+    /* Neutral Colors (Light Mode) */
+    --color-bg: #FFFFFF;        /* Main page background */
+    --color-bg-alt: #F7F7F7;    /* Alternate background */
+    --color-border: #CCCCCC;    /* Border and divider color */
+    --color-text: #0E0606;      /* Main text color */
+    --color-text-muted: #666666;/* Secondary text */
+    --color-text-inverse: #FFFFFF; /* Text on dark backgrounds */
+  }
+
   html {
     scroll-behavior: smooth;
   }
   
   body {
-    @apply font-sans text-secondary-800;
+    @apply font-sans text-secondary-900;
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
   
   body.dark-mode {
-    background-color: #121212;
-    color: #e0e0e0;
+    --color-bg: #121212;
+    --color-bg-alt: #1F1F1F;
+    --color-border: #444444;
+    --color-text: #F0F0F0;
+    --color-text-muted: #AAAAAA;
+    
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -21,13 +44,13 @@
   }
 }
 
-.dark-mode a {
-  color: #90caf9;
+.dark a {
+  color: #F0F0F0;
 }
 
 .header.dark {
-  background-color: #333;
-  color: #fff;
+  background-color: var(--color-bg-alt);
+  color: var(--color-text);
 }
 
 @layer components {
@@ -36,15 +59,16 @@
   }
   
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700;
+    @apply bg-primary-500 text-white hover:bg-primary-600 focus:ring-2 focus:ring-primary-300;
   }
   
   .btn-secondary {
-    @apply bg-secondary-100 text-secondary-800 hover:bg-secondary-200;
+    @apply bg-white text-primary-500 border-2 border-primary-500 hover:bg-primary-50 
+           dark:bg-transparent dark:text-white dark:border-primary-500 dark:hover:bg-primary-900/30;
   }
   
   .btn-accent {
-    @apply bg-accent-500 text-white hover:bg-accent-600;
+    @apply bg-accent-800 text-white hover:bg-accent-700;
   }
   
   .container-custom {

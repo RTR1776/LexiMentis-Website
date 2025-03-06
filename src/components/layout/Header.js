@@ -60,7 +60,7 @@ const Header = ({ scrolled }) => {
             className={`p-2 rounded-full transition-colors ${
               darkMode 
                 ? 'bg-secondary-700 hover:bg-secondary-600 text-white' 
-                : 'bg-gray-100 hover:bg-gray-200 text-secondary-800'
+                : 'bg-neutral-100 hover:bg-neutral-200 text-secondary-900'
             }`}
             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
           >

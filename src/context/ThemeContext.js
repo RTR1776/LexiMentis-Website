@@ -20,10 +20,12 @@ export const ThemeProvider = ({ children }) => {
   // Update localStorage when theme changes
   useEffect(() => {
     localStorage.setItem('darkMode', darkMode.toString());
-    // Apply dark mode class to body
+    // Apply dark mode class to body and html for Tailwind dark: variant
     if (darkMode) {
+      document.documentElement.classList.add('dark');
       document.body.classList.add('dark-mode');
     } else {
+      document.documentElement.classList.remove('dark');
       document.body.classList.remove('dark-mode');
     }
   }, [darkMode]);
