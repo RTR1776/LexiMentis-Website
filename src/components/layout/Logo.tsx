@@ -3,29 +3,33 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 
 interface LogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | 'responsive';
   linkTo: string | null;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 const Logo: React.FC<LogoProps> = ({ 
   size = 'md', 
   linkTo = '/', 
-  className = '' 
+  className = '',
+  style = {}
 }) => {
   const { darkMode } = useTheme();
   
   const sizeClasses = {
-    sm: 'w-32',     // Increased from w-24
-    md: 'w-40',     // Increased from w-32
-    lg: 'w-48',     // Increased from w-40
-    xl: 'w-56',     // Increased from w-48
-    '2xl': 'w-64',  // Increased from w-56
-    '3xl': 'w-72',  // Increased from w-64
-    '4xl': 'w-96',  // New larger size (24rem = 384px)
+    sm: 'w-32',      // 8rem (128px)
+    md: 'w-40',      // 10rem (160px)
+    lg: 'w-48',      // 12rem (192px)
+    xl: 'w-64',      // 16rem (256px)
+    '2xl': 'w-80',   // 20rem (320px)
+    '3xl': 'w-96',   // 24rem (384px)
+    '4xl': 'w-[28rem]', // 28rem (448px)
+    '5xl': 'w-[32rem]', // 32rem (512px)
+    'responsive': 'w-[50%] sm:w-[60%] md:w-[70%] lg:w-[80%] xl:w-[60%] 2xl:w-[50%]',
   };
   
-  const logoClass = `${sizeClasses[size]} h-auto ${className} ${darkMode ? 'leximentis-logo-dark' : ''}`;
+  const logoClass = `${size === 'responsive' ? sizeClasses.responsive : sizeClasses[size]} h-auto ${className} ${darkMode ? 'leximentis-logo-dark' : ''}`;
   
   const logo = (
     <>
@@ -33,15 +37,13 @@ const Logo: React.FC<LogoProps> = ({
         src="/LexiMentis-Logo.svg" 
         alt="LexiMentis Logo" 
         className={logoClass}
-        style={{ maxWidth: '100%', height: 'auto' }}
+        style={{ maxWidth: '100%', height: 'auto', ...style }}
       />
-      {/* CSS to preserve red elements in dark mode */}
       {darkMode && (
         <style jsx="true">{`
           .leximentis-logo-dark {
             filter: brightness(0) invert(1);
           }
-          /* Target the specific SVG elements by their IDs and preserve the red color */
           .leximentis-logo-dark #rect1,
           .leximentis-logo-dark #path2 {
             filter: brightness(0) saturate(100%) invert(11%) sepia(93%) 

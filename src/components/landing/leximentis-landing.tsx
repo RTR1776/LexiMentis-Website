@@ -17,14 +17,14 @@ const LexiMentisLanding = () => {
 
   return (
     <div className="relative w-full h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
-      <div className="text-center w-full px-4 animate-fadeIn max-w-4xl mx-auto -mt-16">
-        {/* Logo centered */}
-        <div className="flex justify-center items-center mb-6">
-          <Logo size="4xl" linkTo={null} />
+      <div className="text-center w-full px-4 animate-fadeIn mx-auto -mt-16">
+        {/* Logo centered with responsive sizing */}
+        <div className="flex justify-center items-center mb-6 w-full">
+          <Logo size="responsive" linkTo={null} />
         </div>
         
-        {/* Tagline with pure centering, no wrapping constraints */}
-        <p className="text-2xl mb-8 text-secondary-900 dark:text-neutral-200 font-light text-center whitespace-nowrap">
+        {/* Tagline with responsive text sizing */}
+        <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-secondary-900 dark:text-neutral-200 font-light text-center">
           Leveraging AI to streamline workers' compensation legal workflows
         </p>
         
@@ -33,8 +33,8 @@ const LexiMentisLanding = () => {
           <Link 
             to="/how-it-works"
             className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 
-                      text-white font-semibold py-4 px-16 rounded-lg transition-all duration-300 
-                      shadow-lg text-lg hover:shadow-xl"
+                      text-white font-semibold py-3 px-8 sm:py-4 sm:px-16 rounded-lg transition-all duration-300 
+                      shadow-lg text-base sm:text-lg hover:shadow-xl"
           >
             Learn More
           </Link>
