@@ -42,7 +42,7 @@ const Logo: React.FC<LogoProps> = ({
           }
           /* Target the specific SVG elements by their IDs and preserve the red color */
           .leximentis-logo-dark #rect1,
-          .leximentis-logo-dark #circle1 {
+          .leximentis-logo-dark #path2 {
             filter: brightness(0) saturate(100%) invert(11%) sepia(93%) 
                    saturate(6312%) hue-rotate(0deg) brightness(99%) contrast(115%);
           }
