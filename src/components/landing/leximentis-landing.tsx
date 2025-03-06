@@ -17,21 +17,18 @@ const LexiMentisLanding = () => {
 
   return (
     <div className="relative w-full h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
-      {/* Set a max-width container for better alignment consistency */}
-      <div className="w-full max-w-4xl px-4 animate-fadeIn -mt-16">
-        {/* Logo container with max-width constraints matching the content below */}
-        <div className="flex justify-center items-center mb-8">
-          <div className="flex justify-center items-center w-full">
-            <Logo 
-              size="responsive" 
-              linkTo={null} 
-              className="mx-auto" 
-            />
-          </div>
+      <div className="w-full px-4 animate-fadeIn -mt-16 flex flex-col items-center justify-center">
+        {/* Logo with direct width control */}
+        <div className="mb-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 max-w-3xl">
+          <Logo 
+            size="3xl" 
+            linkTo={null}
+            style={{ width: '100%' }}
+          />
         </div>
         
-        {/* Content container for tagline and button */}
-        <div className="text-center w-full">
+        {/* Content container for tagline and button - match logo width */}
+        <div className="text-center w-full md:w-3/4 lg:w-2/3 xl:w-1/2 max-w-3xl">
           {/* Tagline with responsive text sizing */}
           <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-secondary-900 dark:text-neutral-200 font-light">
             Leveraging AI to streamline workers' compensation legal workflows
