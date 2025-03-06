@@ -20,7 +20,7 @@ const LexiMentisLanding = () => {
       <div className="text-center w-full px-4 animate-fadeIn max-w-4xl mx-auto -mt-16">
         {/* Logo centered */}
         <div className="flex justify-center items-center mb-6">
-          <Logo size="3xl" linkTo={null} />
+          <Logo size="4xl" linkTo={null} />
         </div>
         
         {/* Tagline with pure centering, no wrapping constraints */}

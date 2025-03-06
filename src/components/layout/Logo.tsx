@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 
 interface LogoProps {
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
   linkTo: string | null;
   className?: string;
 }
@@ -16,12 +16,13 @@ const Logo: React.FC<LogoProps> = ({
   const { darkMode } = useTheme();
   
   const sizeClasses = {
-    sm: 'w-24',
-    md: 'w-32',
-    lg: 'w-40',
-    xl: 'w-48',
-    '2xl': 'w-56',
-    '3xl': 'w-64',
+    sm: 'w-32',     // Increased from w-24
+    md: 'w-40',     // Increased from w-32
+    lg: 'w-48',     // Increased from w-40
+    xl: 'w-56',     // Increased from w-48
+    '2xl': 'w-64',  // Increased from w-56
+    '3xl': 'w-72',  // Increased from w-64
+    '4xl': 'w-96',  // New larger size (24rem = 384px)
   };
   
   const logoClass = `${sizeClasses[size]} h-auto ${className} ${darkMode ? 'leximentis-logo-dark' : ''}`;
