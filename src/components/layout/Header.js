@@ -39,12 +39,12 @@ const Header = ({ scrolled }) => {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `text-lg transition-colors hover:text-primary-600 ${
+                `text-lg font-semibold transition-colors hover:text-primary-600 ${
                   isActive 
-                    ? 'text-primary-600 font-medium' 
+                    ? 'text-primary-600 font-bold' 
                     : darkMode 
-                      ? 'text-white' 
-                      : 'text-secondary-800'
+                      ? scrolled ? 'text-white' : 'text-white font-bold' 
+                      : scrolled ? 'text-secondary-900 font-bold' : 'text-secondary-900 font-bold'
                 }`
               }
               end={item.path === '/'}
@@ -109,14 +109,14 @@ const Header = ({ scrolled }) => {
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `block px-3 py-2 rounded-md ${
+                  `block px-3 py-2 rounded-md font-semibold ${
                     isActive 
                       ? darkMode 
-                        ? 'bg-secondary-700 text-white' 
-                        : 'bg-primary-50 text-primary-600' 
+                        ? 'bg-secondary-700 text-white font-bold' 
+                        : 'bg-primary-50 text-primary-600 font-bold' 
                       : darkMode 
                         ? 'text-white hover:bg-secondary-700' 
-                        : 'text-secondary-800 hover:bg-gray-100'
+                        : 'text-secondary-900 hover:bg-gray-100'
                   }`
                 }
                 onClick={() => setMobileMenuOpen(false)}

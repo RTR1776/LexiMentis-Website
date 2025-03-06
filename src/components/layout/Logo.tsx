@@ -25,11 +25,27 @@ const Logo: React.FC<LogoProps> = ({
   };
   
   const logoImg = (
-    <img 
-      src="/LexiMentis-Logo.svg" 
-      alt="LexiMentis" 
-      className={`${sizes[size]} ${darkMode ? 'filter brightness-0 invert' : ''} ${className}`}
-    />
+    <>
+      <img 
+        src="/LexiMentis-Logo.svg" 
+        alt="LexiMentis" 
+        className={`${sizes[size]} ${className} ${darkMode ? 'leximentis-logo-dark' : ''}`}
+      />
+      {/* CSS to preserve red elements in dark mode */}
+      {darkMode && (
+        <style jsx="true">{`
+          .leximentis-logo-dark {
+            filter: brightness(0) invert(1);
+          }
+          /* Target the specific SVG elements by their IDs and preserve the red color */
+          .leximentis-logo-dark #rect1,
+          .leximentis-logo-dark #circle1 {
+            filter: brightness(0) saturate(100%) invert(11%) sepia(93%) 
+                   saturate(6312%) hue-rotate(0deg) brightness(99%) contrast(115%);
+          }
+        `}</style>
+      )}
+    </>
   );
   
   if (linkTo === null) {
