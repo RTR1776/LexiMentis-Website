@@ -4,7 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
-  linkTo?: string | null;
+  linkTo: string | null;
   className?: string;
 }
 
@@ -15,21 +15,24 @@ const Logo: React.FC<LogoProps> = ({
 }) => {
   const { darkMode } = useTheme();
   
-  const sizes = {
-    sm: 'h-8 w-auto',
-    md: 'h-10 w-auto',
-    lg: 'h-16 w-auto',
-    xl: 'h-32 w-auto',  // Increased from h-24
-    '2xl': 'h-48 w-auto',
-    '3xl': 'h-64 w-auto',
+  const sizeClasses = {
+    sm: 'w-24',
+    md: 'w-32',
+    lg: 'w-40',
+    xl: 'w-48',
+    '2xl': 'w-56',
+    '3xl': 'w-64',
   };
   
-  const logoImg = (
+  const logoClass = `${sizeClasses[size]} h-auto ${className} ${darkMode ? 'leximentis-logo-dark' : ''}`;
+  
+  const logo = (
     <>
       <img 
         src="/LexiMentis-Logo.svg" 
-        alt="LexiMentis" 
-        className={`${sizes[size]} ${className} ${darkMode ? 'leximentis-logo-dark' : ''}`}
+        alt="LexiMentis Logo" 
+        className={logoClass}
+        style={{ maxWidth: '100%', height: 'auto' }}
       />
       {/* CSS to preserve red elements in dark mode */}
       {darkMode && (
@@ -48,15 +51,7 @@ const Logo: React.FC<LogoProps> = ({
     </>
   );
   
-  if (linkTo === null) {
-    return logoImg;
-  }
-  
-  return (
-    <Link to={linkTo} className="flex items-center">
-      {logoImg}
-    </Link>
-  );
+  return linkTo ? <Link to={linkTo}>{logo}</Link> : logo;
 };
 
 export default Logo;
