@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './leximentis-landing.css';
+import { useTheme } from '../../context/ThemeContext';
+import Logo from '../layout/Logo';
 
 const LexiMentisLanding = () => {
-  // Simple state to track if component is mounted (for potential animations later)
   const [mounted, setMounted] = useState(false);
+  const { darkMode } = useTheme();
 
   useEffect(() => {
     setMounted(true);
     
-    // Clean up function
     return () => {
       setMounted(false);
     };
@@ -17,13 +18,11 @@ const LexiMentisLanding = () => {
 
   return (
     <div className="relative w-full h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
-      {/* Main content container with proper spacing */}
       <div className="text-center px-4 animate-fadeIn">
-        {/* Main logo text */}
-        <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600 
-                      bg-clip-text text-transparent drop-shadow-xl tracking-wide mb-8">
-          LEXIMENTIS
-        </h1>
+        {/* Logo image instead of text */}
+        <div className="flex justify-center mb-8">
+          <Logo size="xl" linkTo={null} />
+        </div>
         
         {/* Tagline */}
         <p className="text-3xl font-bold bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 
@@ -46,7 +45,6 @@ const LexiMentisLanding = () => {
         </Link>
       </div>
       
-      {/* Add simple fade-in animations with CSS */}
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(20px); }

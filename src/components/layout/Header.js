@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useTheme } from '../../context/ThemeContext';
 import { Moon, Sun } from 'lucide-react';
+import Logo from './Logo';
 
 const Header = ({ scrolled }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -29,9 +30,7 @@ const Header = ({ scrolled }) => {
       }`}
     >
       <div className="container-custom flex items-center justify-between">
-        <Link to="/" className="flex items-center">
-          <span className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-primary-600'}`}>LexiMentis</span>
-        </Link>
+        <Logo size="md" />
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-8">

@@ -1,13 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
+import Logo from './Logo';
 
 const Footer = () => {
+  const { darkMode } = useTheme();
+
   return (
     <footer className="bg-secondary-800 text-white dark:bg-gray-950">
       <div className="container-custom py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">LexiMentis</h3>
+            <div className="mb-4">
+              <Logo size="lg" linkTo={null} />
+            </div>
             <p className="text-secondary-300">
               AI-powered workers' compensation assistant for attorneys in Kansas and Missouri.
             </p>
