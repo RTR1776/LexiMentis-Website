@@ -17,17 +17,20 @@ const LexiMentisLanding = () => {
 
   return (
     <div className="relative w-full h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
-      {/* Single unified container for better alignment control */}
-      <div className="w-full px-4 animate-fadeIn -mt-16">
-        {/* Central content container with fixed width */}
-        <div className="mx-auto w-full md:w-3/4 lg:w-2/3 xl:w-1/2 max-w-3xl flex flex-col items-center">
-          {/* Logo with explicit centering */}
-          <div className="mb-8 w-full flex justify-center">
-            <Logo 
-              size="3xl" 
-              linkTo={null}
-              className="mx-auto" 
-              style={{ maxWidth: '100%' }}
+      <div className="w-full animate-fadeIn -mt-16">
+        <div className="mx-auto max-w-4xl px-4">
+          {/* Direct image with fixed width - no Logo component */}
+          <div className="flex justify-center mb-8">
+            <img 
+              src="/LexiMentis-Logo.svg" 
+              alt="LexiMentis Logo" 
+              className={`w-auto h-auto ${darkMode ? 'leximentis-logo-dark' : ''}`}
+              style={{ 
+                width: '100%',
+                maxWidth: '500px',
+                marginLeft: 'auto',
+                marginRight: 'auto'
+              }}
             />
           </div>
           
@@ -57,6 +60,14 @@ const LexiMentisLanding = () => {
         }
         .animate-fadeIn {
           animation: fadeIn 0.8s ease-out forwards;
+        }
+        .leximentis-logo-dark {
+          filter: brightness(0) invert(1);
+        }
+        .leximentis-logo-dark #rect1,
+        .leximentis-logo-dark #path2 {
+          filter: brightness(0) saturate(100%) invert(11%) sepia(93%) 
+                 saturate(6312%) hue-rotate(0deg) brightness(99%) contrast(115%);
         }
       `}</style>
     </div>
