@@ -17,20 +17,22 @@ const LexiMentisLanding = () => {
 
   return (
     <div className="relative w-full h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
-      <div className="w-full px-4 animate-fadeIn -mt-16 flex flex-col items-center justify-center">
-        {/* Logo with direct width control */}
-        <div className="mb-8 w-full md:w-3/4 lg:w-2/3 xl:w-1/2 max-w-3xl">
-          <Logo 
-            size="3xl" 
-            linkTo={null}
-            style={{ width: '100%' }}
-          />
-        </div>
-        
-        {/* Content container for tagline and button - match logo width */}
-        <div className="text-center w-full md:w-3/4 lg:w-2/3 xl:w-1/2 max-w-3xl">
+      {/* Single unified container for better alignment control */}
+      <div className="w-full px-4 animate-fadeIn -mt-16">
+        {/* Central content container with fixed width */}
+        <div className="mx-auto w-full md:w-3/4 lg:w-2/3 xl:w-1/2 max-w-3xl flex flex-col items-center">
+          {/* Logo with explicit centering */}
+          <div className="mb-8 w-full flex justify-center">
+            <Logo 
+              size="3xl" 
+              linkTo={null}
+              className="mx-auto" 
+              style={{ maxWidth: '100%' }}
+            />
+          </div>
+          
           {/* Tagline with responsive text sizing */}
-          <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-secondary-900 dark:text-neutral-200 font-light">
+          <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-secondary-900 dark:text-neutral-200 font-light text-center">
             Leveraging AI to streamline workers' compensation legal workflows
           </p>
           
