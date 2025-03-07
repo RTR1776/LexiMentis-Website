@@ -27,7 +27,7 @@ const LexiMentisLanding = () => {
               className={`w-auto h-auto ${darkMode ? 'leximentis-logo-dark' : ''}`}
               style={{ 
                 width: '100%',
-                maxWidth: '500px',
+                maxWidth: '900px',
                 marginLeft: 'auto',
                 marginRight: 'auto'
               }}
