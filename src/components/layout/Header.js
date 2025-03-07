@@ -15,6 +15,7 @@ const Header = ({ scrolled }) => {
     { name: 'Demo', path: '/demo' },
     { name: 'Cost Calculator', path: '/calculator' },
     { name: 'About', path: '/about' },
+    { name: 'Case Management', path: '/case-management' },
   ];
 
   return (

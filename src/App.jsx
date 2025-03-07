@@ -8,6 +8,7 @@ import DemoPage from './pages/AIDemo';
 import BookingPage from './pages/BookingCalendar';
 import CalculatorPage from './pages/CostSavingsCalculator';
 import AboutPage from './pages/AboutPage';
+import CaseManagementDashboard from './pages/CaseManagementDashboard';
 import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
               <Route path="book" element={<BookingPage />} />
               <Route path="calculator" element={<CalculatorPage />} />
               <Route path="about" element={<AboutPage />} />
+              <Route path="case-management" element={<CaseManagementDashboard />} />
             </Route>
           </Routes>
           <Analytics />

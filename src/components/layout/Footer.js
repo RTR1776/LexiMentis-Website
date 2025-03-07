@@ -27,6 +27,7 @@ const Footer = () => {
               <li><Link to="/demo" className={`${darkMode ? 'text-secondary-300' : 'text-secondary-600'} hover:${darkMode ? 'text-white' : 'text-primary-600'} transition-colors`}>Demo</Link></li>
               <li><Link to="/calculator" className={`${darkMode ? 'text-secondary-300' : 'text-secondary-600'} hover:${darkMode ? 'text-white' : 'text-primary-600'} transition-colors`}>Cost Calculator</Link></li>
               <li><Link to="/about" className={`${darkMode ? 'text-secondary-300' : 'text-secondary-600'} hover:${darkMode ? 'text-white' : 'text-primary-600'} transition-colors`}>About</Link></li>
+              <li><Link to="/case-management" className={`${darkMode ? 'text-secondary-300' : 'text-secondary-600'} hover:${darkMode ? 'text-white' : 'text-primary-600'} transition-colors`}>Case Management</Link></li>
             </ul>
           </div>
           
