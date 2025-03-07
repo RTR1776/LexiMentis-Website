@@ -18,16 +18,14 @@ const LexiMentisLanding = () => {
   return (
     <div className="relative w-full h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
       <div className="w-full animate-fadeIn -mt-16">
-        <div className="mx-auto max-w-4xl px-4">
-          {/* Logo container with proper centering */}
-          <div className="flex justify-center mb-8">
-            <div className="w-full max-w-[900px]">
-              <img 
-                src="/LexiMentis-Logo.svg" 
-                alt="LexiMentis Logo" 
-                className={`w-full h-auto ${darkMode ? 'leximentis-logo-dark' : ''}`}
-              />
-            </div>
+        <div className="mx-auto max-w-4xl px-4 flex flex-col items-center">
+          {/* Logo container - simplified approach */}
+          <div className="mb-8" style={{ width: '900px', maxWidth: '100%' }}>
+            <img 
+              src="/LexiMentis-Logo.svg" 
+              alt="LexiMentis Logo" 
+              className={`w-full h-auto ${darkMode ? 'leximentis-logo-dark' : ''}`}
+            />
           </div>
           
           {/* Tagline with responsive text sizing */}
@@ -36,16 +34,14 @@ const LexiMentisLanding = () => {
           </p>
           
           {/* CTA Button with consistent centering */}
-          <div className="flex justify-center">
-            <Link 
-              to="/how-it-works"
-              className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 
-                        text-white font-semibold py-3 px-8 sm:py-4 sm:px-16 rounded-lg transition-all duration-300 
-                        shadow-lg text-base sm:text-lg hover:shadow-xl"
-            >
-              Learn More
-            </Link>
-          </div>
+          <Link 
+            to="/how-it-works"
+            className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 
+                      text-white font-semibold py-3 px-8 sm:py-4 sm:px-16 rounded-lg transition-all duration-300 
+                      shadow-lg text-base sm:text-lg hover:shadow-xl"
+          >
+            Learn More
+          </Link>
         </div>
       </div>
       
