@@ -20,7 +20,7 @@ const LexiMentisLanding = () => {
       <div className="w-full animate-fadeIn -mt-16">
         <div className="mx-auto max-w-4xl px-4 flex flex-col items-center">
           {/* Logo container - simplified approach */}
-          <div className="mb-8" style={{ width: '900px', maxWidth: '100%' }}>
+          <div className="mb-8" style={{ width: '900px', maxWidth: '100%', margin: '0 auto', transform: 'translateX(55px)' }}>
             <img 
               src="/LexiMentis-Logo.svg" 
               alt="LexiMentis Logo" 
@@ -29,7 +29,10 @@ const LexiMentisLanding = () => {
           </div>
           
           {/* Tagline with responsive text sizing */}
-          <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-secondary-900 dark:text-neutral-200 font-light text-center">
+          <p 
+            className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-secondary-900 dark:text-neutral-200 font-light text-center" 
+            style={{ whiteSpace: 'nowrap' }}
+          >
             Leveraging AI to streamline workers' compensation legal workflows
           </p>
           
