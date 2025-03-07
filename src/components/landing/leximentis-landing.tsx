@@ -19,19 +19,15 @@ const LexiMentisLanding = () => {
     <div className="relative w-full h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
       <div className="w-full animate-fadeIn -mt-16">
         <div className="mx-auto max-w-4xl px-4">
-          {/* Direct image with fixed width - no Logo component */}
+          {/* Logo container with proper centering */}
           <div className="flex justify-center mb-8">
-            <img 
-              src="/LexiMentis-Logo.svg" 
-              alt="LexiMentis Logo" 
-              className={`w-auto h-auto ${darkMode ? 'leximentis-logo-dark' : ''}`}
-              style={{ 
-                width: '100%',
-                maxWidth: '900px',
-                marginLeft: 'auto',
-                marginRight: 'auto'
-              }}
-            />
+            <div className="w-full max-w-[900px]">
+              <img 
+                src="/LexiMentis-Logo.svg" 
+                alt="LexiMentis Logo" 
+                className={`w-full h-auto ${darkMode ? 'leximentis-logo-dark' : ''}`}
+              />
+            </div>
           </div>
           
           {/* Tagline with responsive text sizing */}
