@@ -14,8 +14,24 @@ import {
 } from 'lucide-react';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import SEO from '../components/SEO';
 
 const CaseManagementPage = () => {
+  // Schema for CaseManagement page
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "LexiMentis Case Management Dashboard",
+    "applicationCategory": "Legal Software",
+    "operatingSystem": "Web Browser",
+    "description": "AI-powered workers' compensation case management system for attorneys in Kansas and Missouri",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  };
+
   const [activeView, setActiveView] = useState('dashboard');
   const { darkMode } = useTheme();
   const [scrolled, setScrolled] = useState(false);
@@ -658,6 +674,14 @@ const CaseManagementPage = () => {
 
   return (
     <div className={`flex flex-col min-h-screen ${darkMode ? 'dark' : ''}`}>
+      <SEO 
+        title="Case Management Dashboard | Streamline WC Cases" 
+        description="AI-powered workers' compensation case management dashboard to streamline document processing, track cases, and automate routine tasks."
+        keywords="workers compensation case management, legal AI dashboard, document analysis, Kansas workers comp cases, Missouri workers comp cases"
+        canonical="/case-management"
+        schema={schema}
+      />
+      
       <Header scrolled={scrolled} />
       <div className={`${darkMode ? 'bg-secondary-900' : 'bg-neutral-50'} min-h-screen pt-16 flex-grow`}>
         <Navigation />

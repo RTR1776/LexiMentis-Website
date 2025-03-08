@@ -81,6 +81,31 @@ const Hero = () => {
             <span className="text-white/70 font-semibold text-lg">Former Director at AIG</span>
             <span className="text-white/70 font-semibold text-lg">Managed $500M+ in Legal Billing</span>
             <span className="text-white/70 font-semibold text-lg">Kansas Legal Expert</span>
+            {/* Add loading="lazy" to improve page load speed */}
+            <img 
+              src="/client-logo-1.svg" 
+              alt="Law firm client of LexiMentis" 
+              className="h-8 md:h-10 opacity-70" 
+              loading="lazy" 
+              width="160" 
+              height="40"
+            />
+            <img 
+              src="/client-logo-2.svg" 
+              alt="Insurance company using LexiMentis AI" 
+              className="h-8 md:h-10 opacity-70" 
+              loading="lazy" 
+              width="160" 
+              height="40"
+            />
+            <img 
+              src="/client-logo-3.svg" 
+              alt="Legal technology partner of LexiMentis" 
+              className="h-8 md:h-10 opacity-70" 
+              loading="lazy" 
+              width="160" 
+              height="40"
+            />
           </div>
         </div>
       </footer>

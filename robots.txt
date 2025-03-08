@@ -1,4 +1,16 @@
+# LexiMentis Robots.txt
 User-agent: *
 Allow: /
 
+# Optimize crawl budget by excluding non-essential pages
+Disallow: /admin/
+Disallow: /dev/
+Disallow: /test/
+Disallow: /api/
+Disallow: /thank-you/
+
+# Set crawl delay to be polite to search engines
+Crawl-delay: 10
+
+# Specify sitemap location
 Sitemap: https://www.leximentis.com/sitemap.xml

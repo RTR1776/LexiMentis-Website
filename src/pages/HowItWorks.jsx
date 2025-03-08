@@ -1,10 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Database, FileText, Brain, Cpu, ClipboardCheck, MessageSquare, Network, Lock, Zap } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const HowItWorks = () => {
+  // Schema for HowItWorks page
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "How LexiMentis Works",
+    "description": "Learn how LexiMentis uses Model Context Protocol to streamline workers' compensation case management",
+    "url": "https://www.leximentis.com/how-it-works",
+    "mainEntity": {
+      "@type": "Service",
+      "name": "LexiMentis AI Workers' Compensation Assistant",
+      "description": "AI-powered solution for workers' compensation attorneys in Kansas and Missouri"
+    }
+  };
+
   return (
     <div className="bg-neutral-50 dark:bg-secondary-900 min-h-screen">
+      <SEO 
+        title="How It Works | Model Context Protocol Technology" 
+        description="Discover how LexiMentis uses Model Context Protocol to provide secure, intelligent AI assistance for workers' compensation attorneys in Kansas and Missouri."
+        keywords="Model Context Protocol, AI legal assistant, workers compensation technology, legal document analysis, medical record analysis"
+        canonical="/how-it-works"
+        schema={schema}
+      />
+      
       {/* Hero Section with Gradient Background */}
       <div className="bg-gradient-to-br from-accent-800 to-accent-900 dark:from-accent-800 dark:to-secondary-900 text-white py-20">
         <div className="container mx-auto px-6 max-w-6xl">
@@ -69,12 +92,15 @@ const HowItWorks = () => {
           <div className="bg-white dark:bg-secondary-800 p-8 rounded-xl shadow-lg mb-12">
             <img 
               src="/improved-mcp-diagram.svg" 
-              alt="LexiMentis MCP Architecture Diagram" 
+              alt="LexiMentis Model Context Protocol Architecture for Workers Compensation AI" 
               className="w-full h-auto"
               aria-describedby="mcp-diagram-description"
+              loading="lazy"
+              width="1200"
+              height="800"
             />
             <p id="mcp-diagram-description" className="sr-only">
-              Diagram showing how LexiMentis MCP architecture connects specialized servers for document processing, knowledge base, medical analysis, forms, workflow, and assistant capabilities.
+              Comprehensive diagram showing how LexiMentis Model Context Protocol architecture connects specialized servers for document processing, knowledge base, medical analysis, forms automation, workflow optimization, and AI assistant capabilities for workers compensation cases.
             </p>
           </div>
         </div>

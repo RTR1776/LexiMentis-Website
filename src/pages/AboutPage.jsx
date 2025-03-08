@@ -2,10 +2,33 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Award, Book, Briefcase, CheckCircle, FileText, Gem, Star, Users } from 'lucide-react';
 import profilePic from '../assets/profilePic.jpg'; 
+import SEO from '../components/SEO';
 
 const AboutPage = () => {
+  // Schema for AboutPage
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About LexiMentis",
+    "description": "Learn about LexiMentis, an AI-powered workers' compensation solution backed by 20+ years of legal expertise.",
+    "url": "https://www.leximentis.com/about",
+    "mainEntity": {
+      "@type": "Person",
+      "name": "LJ Cox",
+      "jobTitle": "Legal Operations & AI Consultant",
+      "description": "20+ years of experience in legal operations and technology"
+    }
+  };
+
   return (
     <div className="bg-neutral-50 dark:bg-secondary-900 min-h-screen">
+      <SEO 
+        title="About | 20+ Years of Legal Expertise" 
+        description="Meet the founder of LexiMentis with over 20 years of legal operations experience, specializing in workers' compensation law in Kansas and Missouri."
+        keywords="legal operations expert, workers compensation expert, Kansas workers comp, Missouri workers comp, legal AI consultant"
+        canonical="/about"
+        schema={schema}
+      />
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-accent-800 to-accent-900 dark:from-accent-800 dark:to-secondary-900 text-white py-20">
         <div className="container mx-auto px-6 max-w-6xl">
