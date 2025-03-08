@@ -4,6 +4,7 @@ import './leximentis-landing.css';
 import { TAGLINE } from '../../constants/taglines';
 import { useTheme } from '../../context/ThemeContext';
 import Logo from '../layout/Logo';
+// Make sure the path is correct - this is likely the issue
 import Tagline from '../common/Tagline';
 
 const LexiMentisLanding = () => {
@@ -21,7 +22,7 @@ const LexiMentisLanding = () => {
     <div className="relative w-full h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
       <div className="w-full animate-fadeIn -mt-16">
         <div className="mx-auto max-w-4xl px-4 flex flex-col items-center">
-          {/* Logo container - simplified approach */}
+          {/* Logo container */}
           <div className="mb-8" style={{ width: '900px', maxWidth: '100%', margin: '0 auto', transform: 'translateX(55px)' }}>
             <img 
               src="/LexiMentis-Logo.svg" 
@@ -30,12 +31,18 @@ const LexiMentisLanding = () => {
             />
           </div>
           
-          {/* Using the new Tagline component */}
-          <div className="w-full overflow-hidden mb-6 sm:mb-8">
-            <Tagline variant="default" />
-          </div>
+          {/* Use a simple fallback if Tagline fails to load */}
+          {typeof Tagline === 'function' ? (
+            <div className="w-full overflow-hidden mb-6 sm:mb-8">
+              <Tagline variant="default" />
+            </div>
+          ) : (
+            <p className="text-xl sm:text-2xl font-light text-center mb-6 sm:mb-8">
+              {TAGLINE}
+            </p>
+          )}
           
-          {/* CTA Button with consistent centering */}
+          {/* CTA Button */}
           <Link 
             to="/how-it-works"
             className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 
