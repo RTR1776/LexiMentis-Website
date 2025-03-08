@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './leximentis-landing.css';
+import { TAGLINE } from '../../constants/taglines';
 import { useTheme } from '../../context/ThemeContext';
 import Logo from '../layout/Logo';
 
@@ -33,7 +34,7 @@ const LexiMentisLanding = () => {
             className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-6 sm:mb-8 text-secondary-900 dark:text-neutral-200 font-light text-center" 
             style={{ whiteSpace: 'nowrap' }}
           >
-            Leveraging AI to streamline workers' compensation legal workflows
+            {TAGLINE}
           </p>
           
           {/* CTA Button with consistent centering */}

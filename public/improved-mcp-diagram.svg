@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="600" height="400" viewBox="0 0 600 400">
   <!-- Definitions for reusable elements -->
   <defs>
     <!-- Gradient backgrounds -->
@@ -31,7 +31,111 @@
     <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
       <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.3" />
     </filter>
+    
+    <!-- Glow filter for laser effect -->
+    <filter id="blueGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="greenGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="redGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Add animation definitions -->
+    <linearGradient id="animatedBlueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3B82F6">
+        <animate attributeName="offset" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="50%" stop-color="#60A5FA">
+        <animate attributeName="offset" values="0.5;1.5;0.5" dur="2s" repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
+    
+    <linearGradient id="animatedGreenGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10B981">
+        <animate attributeName="offset" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="50%" stop-color="#34D399">
+        <animate attributeName="offset" values="0.5;1.5;0.5" dur="2s" repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
+    
+    <linearGradient id="animatedRedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444">
+        <animate attributeName="offset" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="50%" stop-color="#F87171">
+        <animate attributeName="offset" values="0.5;1.5;0.5" dur="2s" repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
   </defs>
+  
+  <!-- Add animation styles -->
+  <style>
+    .laser-path {
+      stroke-dasharray: 15, 15;
+      stroke-linecap: round;
+    }
+    
+    .flow-forward {
+      animation: flow 1s linear infinite;
+      -webkit-animation: flow 1s linear infinite;
+      -moz-animation: flow 1s linear infinite;
+    }
+    
+    .flow-reverse {
+      animation: flow-reverse 1s linear infinite;
+      -webkit-animation: flow-reverse 1s linear infinite;
+      -moz-animation: flow-reverse 1s linear infinite;
+    }
+    
+    @keyframes flow {
+      0% { stroke-dashoffset: 30; }
+      100% { stroke-dashoffset: 0; }
+    }
+    
+    @keyframes flow-reverse {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 30; }
+    }
+    
+    /* Make sure animation works in all browsers */
+    @-webkit-keyframes flow {
+      0% { stroke-dashoffset: 30; }
+      100% { stroke-dashoffset: 0; }
+    }
+    
+    @-webkit-keyframes flow-reverse {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 30; }
+    }
+    
+    @-moz-keyframes flow {
+      0% { stroke-dashoffset: 30; }
+      100% { stroke-dashoffset: 0; }
+    }
+    
+    @-moz-keyframes flow-reverse {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 30; }
+    }
+  </style>
   
   <!-- Title -->
   <text x="300" y="30" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#0E0606">LexiMentis MCP Architecture</text>
@@ -61,25 +165,26 @@
   <text x="450" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white" font-weight="bold">Law Firm</text>
   <text x="450" y="258" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">Systems</text>
   
-  <!-- Security boundary removed -->
-  
-  <!-- Connection Lines -->
+  <!-- Connection Lines with Laser Animation -->
   <!-- Attorney to AI Platform -->
-  <path d="M400,135 C300,135 250,135 200,135" stroke="#0E0606" stroke-width="2" fill="none" marker-end="url(#arrow)" />
-  <path d="M200,125 C250,125 300,125 400,125" stroke="#0E0606" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <path d="M400,135 C300,135 250,135 200,135" stroke="url(#animatedBlueGradient)" stroke-width="4" fill="none" class="laser-path flow-reverse" filter="url(#blueGlow)" />
+  <path d="M200,125 C250,125 300,125 400,125" stroke="url(#animatedBlueGradient)" stroke-width="4" fill="none" class="laser-path flow-forward" filter="url(#blueGlow)" />
   
   <!-- AI Platform to MCP Servers -->
-  <path d="M150,160 C150,180 150,200 150,220" stroke="#0E0606" stroke-width="2" fill="none" marker-end="url(#arrow)" />
-  <path d="M140,220 C140,200 140,180 140,160" stroke="#0E0606" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <path d="M150,160 C150,180 150,200 150,220" stroke="url(#animatedGreenGradient)" stroke-width="4" fill="none" class="laser-path flow-forward" filter="url(#greenGlow)" />
+  <path d="M140,220 C140,200 140,180 140,160" stroke="url(#animatedGreenGradient)" stroke-width="4" fill="none" class="laser-path flow-reverse" filter="url(#greenGlow)" />
   
   <!-- MCP Servers to Law Firm Systems -->
-  <path d="M200,245 C300,245 340,245 400,245" stroke="#0E0606" stroke-width="2" fill="none" marker-end="url(#arrow)" />
-  <path d="M400,235 C340,235 300,235 200,235" stroke="#0E0606" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <path d="M200,245 C300,245 340,245 400,245" stroke="url(#animatedRedGradient)" stroke-width="4" fill="none" class="laser-path flow-forward" filter="url(#redGlow)" />
+  <path d="M400,235 C340,235 300,235 200,235" stroke="url(#animatedRedGradient)" stroke-width="4" fill="none" class="laser-path flow-reverse" filter="url(#redGlow)" />
+  
+  <!-- SMIL Animation alternative for browsers that support it -->
+  <path d="M400,135 C300,135 250,135 200,135" stroke="#3B82F6" stroke-width="4" fill="none" filter="url(#blueGlow)" stroke-dasharray="5,5">
+    <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite" />
+  </path>
   
   <!-- Labels -->
   <text x="300" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Natural Language Queries</text>
   <text x="300" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Secure, Controlled Access</text>
   <text x="200" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Process</text>
-  
-  <!-- No legend - removed for cleaner design -->
 </svg>
