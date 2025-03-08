@@ -25,7 +25,6 @@ function App() {
               <Route path="calculator" element={<CalculatorPage />} />
               <Route path="about" element={<AboutPage />} />
               <Route path="case-management" element={<CaseManagementDashboard />} />
-              <Route path="/how-it-works-test" element={<TestHowItWorks />} />
             </Route>
           </Routes>
           <Analytics />
