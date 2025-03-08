@@ -32,25 +32,29 @@ const LexiMentisLanding = () => {
           </div>
           
           {/* Use a simple fallback if Tagline fails to load */}
-          {typeof Tagline === 'function' ? (
-            <div className="w-full overflow-hidden mb-6 sm:mb-8">
-              <Tagline variant="default" />
+          <div style={{ transform: 'translateX(55px)' }}>
+            {typeof Tagline === 'function' ? (
+              <div className="w-full overflow-hidden mb-6 sm:mb-8">
+                <Tagline variant="default" />
+              </div>
+            ) : (
+              <p className="text-xl sm:text-2xl font-light text-center mb-6 sm:mb-8">
+                {TAGLINE}
+              </p>
+            )}
+            
+            {/* CTA Button */}
+            <div className="flex justify-center">
+              <Link 
+                to="/how-it-works"
+                className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 
+                          text-white font-semibold py-3 px-8 sm:py-4 sm:px-16 rounded-lg transition-all duration-300 
+                          shadow-lg text-base sm:text-lg hover:shadow-xl"
+              >
+                Learn More
+              </Link>
             </div>
-          ) : (
-            <p className="text-xl sm:text-2xl font-light text-center mb-6 sm:mb-8">
-              {TAGLINE}
-            </p>
-          )}
-          
-          {/* CTA Button */}
-          <Link 
-            to="/how-it-works"
-            className="bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 
-                      text-white font-semibold py-3 px-8 sm:py-4 sm:px-16 rounded-lg transition-all duration-300 
-                      shadow-lg text-base sm:text-lg hover:shadow-xl"
-          >
-            Learn More
-          </Link>
+          </div>
         </div>
       </div>
       
