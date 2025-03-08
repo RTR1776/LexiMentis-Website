@@ -1,9 +1,9 @@
 import React from 'react';
+import SEO from '../components/common/SEO';
 import Hero from '../components/layout/Hero';
 import Features from '../components/layout/Features';
 import Testimonials from '../components/layout/Testimonials';
 import CallToAction from '../components/layout/CallToAction';
-import SEO from '../components/SEO';
 
 const HomePage = () => {
   // Rich structured data for homepage
