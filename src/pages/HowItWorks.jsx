@@ -67,12 +67,15 @@ const HowItWorks = () => {
             </p>
           </div>
           <div className="bg-white dark:bg-secondary-800 p-8 rounded-xl shadow-lg mb-12">
-            <div className="h-64 w-full flex items-center justify-center border-2 border-dashed border-accent-200 dark:border-accent-800 rounded-lg">
-              <p className="text-accent-600 dark:text-accent-400 font-medium">
-                MCP Architecture Diagram
-              </p>
-              {/* Replace with actual diagram in production */}
-            </div>
+            <img 
+              src="/improved-mcp-diagram.svg" 
+              alt="LexiMentis MCP Architecture Diagram" 
+              className="w-full h-auto"
+              aria-describedby="mcp-diagram-description"
+            />
+            <p id="mcp-diagram-description" className="sr-only">
+              Diagram showing how LexiMentis MCP architecture connects specialized servers for document processing, knowledge base, medical analysis, forms, workflow, and assistant capabilities.
+            </p>
           </div>
         </div>
       </div>
