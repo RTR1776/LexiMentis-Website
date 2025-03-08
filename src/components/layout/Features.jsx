@@ -7,7 +7,7 @@ import {
   Clock, 
   Database, 
   ClipboardCheck, 
-  ChatBubble 
+  MessageSquare 
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -46,9 +46,9 @@ const Features = () => {
       color: "text-amber-600 dark:text-amber-400"
     },
     {
-      title: "Expert AI Assistant",
-      description: "Get intelligent answers to complex workers compensation questions specific to Kansas and Missouri.",
-      icon: ChatBubble,
+      title: "Interactive Chat Interface",
+      description: "Engage with our AI through a natural conversation interface designed specifically for legal professionals.",
+      icon: MessageSquare,
       color: "text-purple-600 dark:text-purple-400"
     }
   ];
