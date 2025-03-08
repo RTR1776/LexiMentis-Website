@@ -10,6 +10,7 @@ import CalculatorPage from './pages/CostSavingsCalculator';
 import AboutPage from './pages/AboutPage';
 import CaseManagementDashboard from './pages/CaseManagementDashboard';
 import { ThemeProvider } from './context/ThemeContext';
+// Using regular Helmet - no HelmetProvider needed
 
 function App() {
   return (
