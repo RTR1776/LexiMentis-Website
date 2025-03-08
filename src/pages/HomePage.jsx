@@ -1,5 +1,5 @@
 import React from 'react';
-import SEO from '../components/common/SEO';
+import SEO from '../components/SEO';
 import Hero from '../components/layout/Hero';
 import Features from '../components/layout/Features';
 import Testimonials from '../components/layout/Testimonials';
