@@ -69,8 +69,10 @@ const BookingCalendar = () => {
           ready: () => {
             console.log("Calendly widget is ready");
           },
-          eventScheduled: () => {
-            console.log("Booking was scheduled");
+          eventScheduled: (event) => {
+            console.log("Booking was scheduled", event);
+            // Log the email that should receive notifications
+            console.log("Notification should be sent to:", contactInfo.email || "default Calendly email");
           }
         }
       });
@@ -189,10 +191,10 @@ const BookingCalendar = () => {
             Schedule a personalized demo to see how our AI Workers Comp Assistant can transform your practice and reduce administrative burden.
           </p>
           
-          {/* Add a prominent Calendly button at the top */}
+          {/* Add more top margin to create space */}
           <button
             onClick={openCalendlyWidget}
-            className="mt-6 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 inline-flex items-center"
+            className="mt-12 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 inline-flex items-center"
             disabled={isLoading}
           >
             <CalendarDays className="mr-2 h-5 w-5" />

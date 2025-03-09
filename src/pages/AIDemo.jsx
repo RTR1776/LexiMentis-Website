@@ -33,8 +33,8 @@ const AIDemo = () => {
     setIsProcessing(true);
     
     try {
-      // Call the demo endpoint that integrates Datastax Langflow
-      const response = await fetch('/api/demo-langflow', {
+      // Replace the existing Datastax Langflow endpoint
+      const response = await fetch('/api/mcp-assistant', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -209,7 +209,7 @@ const AIDemo = () => {
                 <div className="flex items-center">
                   <Info className="h-3 w-3 mr-1" />
                   <span>
-                    Demo mode: Responses are powered by Datastax Langflow vector database
+                    Demo mode: Responses are powered by a Neon Vector database with MCP.
                   </span>
                 </div>
                 <div className="flex items-center">
