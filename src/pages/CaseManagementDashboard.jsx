@@ -689,7 +689,6 @@ const CaseManagementPage = () => {
           {renderContent()}
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
