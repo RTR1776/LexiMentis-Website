@@ -183,18 +183,25 @@ const BookingCalendar = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 min-h-screen py-12">
-      <div className="container mx-auto px-4 max-w-4xl">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Book a Demo Call</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Schedule a personalized demo to see how our AI Workers Comp Assistant can transform your practice and reduce administrative burden.
-          </p>
-          
-          {/* Add more top margin to create space */}
+    <div className="bg-white dark:bg-gray-900 min-h-screen">
+      {/* Hero Section with gradient background like other pages */}
+      <div className="bg-gradient-to-br from-accent-800 to-accent-900 dark:from-accent-800 dark:to-secondary-900 text-white py-20">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Book a Demo Call</h2>
+            <p className="text-xl text-accent-100 mb-8 max-w-2xl mx-auto">
+              Schedule a personalized demo to see how our AI Workers Comp Assistant can transform your practice and reduce administrative burden.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 max-w-4xl py-12">
+        {/* Button moved down with more margin for better spacing */}
+        <div className="text-center mb-16">
           <button
             onClick={openCalendlyWidget}
-            className="mt-12 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 inline-flex items-center"
+            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 inline-flex items-center"
             disabled={isLoading}
           >
             <CalendarDays className="mr-2 h-5 w-5" />
