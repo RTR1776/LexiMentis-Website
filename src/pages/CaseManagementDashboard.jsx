@@ -123,6 +123,408 @@ const CaseManagementPage = () => {
     }
   ];
 
+  // Client data
+  const allClients = [
+    {
+      id: "CLI-2025-001",
+      name: "John Smith",
+      email: "john.smith@email.com",
+      phone: "(816) 555-1234",
+      injuryType: "Back Injury",
+      employerName: "KC Construction Inc.",
+      status: "Active",
+      dateOfInjury: "12/10/2024",
+      attorney: "Robert Miller",
+      caseIds: ["WC-2025-1001"],
+      address: "1234 Oak Street, Kansas City, MO 64105",
+      notes: "Client experiences severe pain when sitting for extended periods"
+    },
+    {
+      id: "CLI-2025-002",
+      name: "Sarah Johnson",
+      email: "sarah.j@email.com",
+      phone: "(913) 555-2345",
+      injuryType: "Carpal Tunnel",
+      employerName: "Midwest Data Services",
+      status: "Active",
+      dateOfInjury: "11/15/2024",
+      attorney: "Lisa Warren",
+      caseIds: ["WC-2025-1002"],
+      address: "4567 Elm Avenue, Overland Park, KS 66204",
+      notes: "Progressive symptoms over 6 months before reporting"
+    },
+    {
+      id: "CLI-2025-003",
+      name: "Michael Brown",
+      email: "mbrown@email.com",
+      phone: "(816) 555-3456",
+      injuryType: "Knee Injury",
+      employerName: "Logistics Plus Shipping",
+      status: "Active",
+      dateOfInjury: "01/05/2025",
+      attorney: "Robert Miller",
+      caseIds: ["WC-2025-1003"],
+      address: "7890 Pine Road, Kansas City, MO 64131",
+      notes: "Injured while lifting heavy package"
+    },
+    {
+      id: "CLI-2025-004",
+      name: "Emily Wilson",
+      email: "ewilson@email.com",
+      phone: "(913) 555-4567",
+      injuryType: "Shoulder Injury",
+      employerName: "Memorial Hospital",
+      status: "Active",
+      dateOfInjury: "12/22/2024",
+      attorney: "Lisa Warren",
+      caseIds: ["WC-2025-1004"],
+      address: "1010 Maple Street, Leawood, KS 66211",
+      notes: "Injury occurred while transferring patient"
+    },
+    {
+      id: "CLI-2025-005",
+      name: "Robert Davis",
+      email: "rdavis@email.com",
+      phone: "(816) 555-5678",
+      injuryType: "Back Injury",
+      employerName: "MidWest Warehouse Solutions",
+      status: "Active",
+      dateOfInjury: "01/10/2025",
+      attorney: "James Wilson",
+      caseIds: ["WC-2025-1005"],
+      address: "2468 Cedar Lane, Independence, MO 64050",
+      notes: "Previous back injury in 2022, may be relevant"
+    },
+    {
+      id: "CLI-2025-006",
+      name: "Jennifer Garcia",
+      email: "jgarcia@email.com",
+      phone: "(913) 555-6789",
+      injuryType: "Repetitive Strain",
+      employerName: "Financial Processing Inc.",
+      status: "Active",
+      dateOfInjury: "11/30/2024",
+      attorney: "Robert Miller",
+      caseIds: ["WC-2025-1006"],
+      address: "3579 Birch Drive, Olathe, KS 66062",
+      notes: "Client reports worsening symptoms despite modified duties"
+    },
+    {
+      id: "CLI-2025-007",
+      name: "Thomas Martinez",
+      email: "tmartinez@email.com",
+      phone: "(816) 555-7890",
+      injuryType: "Head Injury",
+      employerName: "City of Kansas City",
+      status: "Active",
+      dateOfInjury: "01/15/2025",
+      attorney: "Lisa Warren",
+      caseIds: ["WC-2025-1007"],
+      address: "8642 Walnut Street, Kansas City, MO 64111",
+      notes: "Concussion from falling debris, experiencing headaches"
+    },
+    {
+      id: "CLI-2025-008",
+      name: "Lisa Robinson",
+      email: "lrobinson@email.com",
+      phone: "(913) 555-8901",
+      injuryType: "Back Injury",
+      employerName: "Delivery Express",
+      status: "Active",
+      dateOfInjury: "12/05/2024",
+      attorney: "James Wilson",
+      caseIds: ["WC-2025-1008"],
+      address: "9753 Spruce Court, Lenexa, KS 66219",
+      notes: "Injured while loading truck, employer disputing work-relatedness"
+    },
+    {
+      id: "CLI-2025-009",
+      name: "David Thompson",
+      email: "dthompson@email.com",
+      phone: "(816) 555-9012",
+      injuryType: "Knee Injury",
+      employerName: "Heartland Manufacturing",
+      status: "Active",
+      dateOfInjury: "01/02/2025",
+      attorney: "Robert Miller",
+      caseIds: ["WC-2025-1009"],
+      address: "1357 Aspen Way, Liberty, MO 64068",
+      notes: "Prior knee surgery 5 years ago, now re-injured same knee"
+    },
+    {
+      id: "CLI-2025-010",
+      name: "Amanda Lee",
+      email: "alee@email.com",
+      phone: "(913) 555-0123",
+      injuryType: "Wrist Injury",
+      employerName: "Tech Solutions LLC",
+      status: "Active",
+      dateOfInjury: "12/18/2024",
+      attorney: "Lisa Warren",
+      caseIds: ["WC-2025-1010"],
+      address: "2468 Oak Park Road, Prairie Village, KS 66208",
+      notes: "Client is programmer, concerned about long-term career impact"
+    }
+  ];
+
+  // Document data
+  const allDocuments = [
+    {
+      id: "DOC-2025-001",
+      title: "Medical Records - Dr. Johnson",
+      type: "Medical Record",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      dateAdded: "02/15/2025",
+      fileSize: "4.2 MB",
+      status: "Reviewed",
+      provider: "Kansas City Medical Center",
+      notes: "Contains initial diagnostic assessment and treatment plan"
+    },
+    {
+      id: "DOC-2025-002",
+      title: "Deposition Transcript - John Smith",
+      type: "Deposition",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      dateAdded: "02/22/2025",
+      fileSize: "1.8 MB",
+      status: "Reviewed",
+      provider: "Legal Transcription Services",
+      notes: "Client describes incident and ongoing symptoms in detail"
+    },
+    {
+      id: "DOC-2025-003",
+      title: "MRI Report - KC Medical Center",
+      type: "Medical Record",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      dateAdded: "02/10/2025",
+      fileSize: "8.5 MB",
+      status: "Reviewed",
+      provider: "Kansas City Medical Center",
+      notes: "Confirms L4/L5 disc herniation with right-sided nerve compression"
+    },
+    {
+      id: "DOC-2025-004",
+      title: "Employer Incident Report",
+      type: "Incident Report",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      dateAdded: "01/05/2025",
+      fileSize: "1.2 MB",
+      status: "Reviewed",
+      provider: "KC Construction Inc.",
+      notes: "Initial employer report, describes injury as 'minor strain'"
+    },
+    {
+      id: "DOC-2025-005",
+      title: "Work Restrictions - Dr. Phillips",
+      type: "Medical Record",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      dateAdded: "02/28/2025",
+      fileSize: "0.8 MB",
+      status: "New",
+      provider: "Orthopedic Specialists",
+      notes: "Updated work restrictions following patient follow-up"
+    },
+    {
+      id: "DOC-2025-006",
+      title: "Physical Therapy Progress Report",
+      type: "Medical Record",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith", 
+      dateAdded: "03/01/2025",
+      fileSize: "2.4 MB",
+      status: "New",
+      provider: "Restore Physical Therapy",
+      notes: "12 sessions completed with minimal improvement noted"
+    },
+    {
+      id: "DOC-2025-007",
+      title: "Settlement Proposal - Draft",
+      type: "Settlement Document",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      dateAdded: "03/01/2025",
+      fileSize: "1.5 MB",
+      status: "Draft",
+      provider: "Internal",
+      notes: "Initial settlement proposal based on current medical evidence"
+    },
+    {
+      id: "DOC-2025-008",
+      title: "EMG Test Results",
+      type: "Medical Record",
+      caseId: "WC-2025-1002",
+      clientName: "Sarah Johnson",
+      dateAdded: "02/18/2025",
+      fileSize: "3.1 MB",
+      status: "Reviewed",
+      provider: "Neurology Associates",
+      notes: "Confirms moderate to severe carpal tunnel syndrome"
+    },
+    {
+      id: "DOC-2025-009",
+      title: "Employer Response to Claim",
+      type: "Legal Document",
+      caseId: "WC-2025-1002",
+      clientName: "Sarah Johnson",
+      dateAdded: "02/05/2025",
+      fileSize: "1.7 MB",
+      status: "Reviewed",
+      provider: "Midwest Data Services",
+      notes: "Employer contesting work-relatedness of condition"
+    },
+    {
+      id: "DOC-2025-010",
+      title: "Dr. Roberts Initial Assessment",
+      type: "Medical Record",
+      caseId: "WC-2025-1003",
+      clientName: "Michael Brown",
+      dateAdded: "01/12/2025",
+      fileSize: "2.9 MB",
+      status: "Reviewed",
+      provider: "Sports Medicine & Orthopedics",
+      notes: "Diagnosis of meniscus tear requiring surgical repair"
+    }
+  ];
+
+  // Calendar events data
+  const allEvents = [
+    {
+      id: "EVT-2025-001",
+      title: "Status Conference",
+      type: "Hearing",
+      date: "03/10/2025",
+      time: "9:00 AM",
+      location: "Division of Workers Compensation",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      notes: "Pre-hearing conference to review case status and set deadlines",
+      duration: "1 hour",
+      participants: ["Judge Wilson", "Defense Attorney Mark Thompson"]
+    },
+    {
+      id: "EVT-2025-002",
+      title: "Client Meeting",
+      type: "Meeting",
+      date: "03/05/2025",
+      time: "2:00 PM",
+      location: "Office",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      notes: "Review settlement options and upcoming hearing preparation",
+      duration: "45 minutes",
+      participants: ["Robert Miller"]
+    },
+    {
+      id: "EVT-2025-003",
+      title: "Dr. Phillips Deposition",
+      type: "Deposition",
+      date: "03/15/2025",
+      time: "1:00 PM",
+      location: "Dr. Phillips Office",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      notes: "Expert testimony from treating physician",
+      duration: "2 hours",
+      participants: ["Dr. Phillips", "Court Reporter", "Defense Attorney"]
+    },
+    {
+      id: "EVT-2025-004",
+      title: "Settlement Conference",
+      type: "Negotiation",
+      date: "03/20/2025",
+      time: "11:00 AM",
+      location: "Mediation Center",
+      caseId: "WC-2025-1003",
+      clientName: "Michael Brown",
+      notes: "Formal settlement discussions with mediator",
+      duration: "3 hours",
+      participants: ["Mediator Jane Adams", "Defense Attorney", "Insurance Adjuster"]
+    },
+    {
+      id: "EVT-2025-005",
+      title: "Follow-up Medical Exam",
+      type: "Medical",
+      date: "03/08/2025",
+      time: "9:30 AM",
+      location: "Orthopedic Specialists",
+      caseId: "WC-2025-1001",
+      clientName: "John Smith",
+      notes: "Physician follow-up to assess recovery progress",
+      duration: "45 minutes",
+      participants: []
+    },
+    {
+      id: "EVT-2025-006",
+      title: "Case Strategy Meeting",
+      type: "Internal",
+      date: "03/04/2025",
+      time: "10:00 AM",
+      location: "Conference Room",
+      caseId: "WC-2025-1002",
+      clientName: "Sarah Johnson",
+      notes: "Discuss approach to employer's contest of claim",
+      duration: "1 hour",
+      participants: ["Lisa Warren", "Paralegal Jim Davis"]
+    },
+    {
+      id: "EVT-2025-007",
+      title: "IME Appointment",
+      type: "Medical",
+      date: "03/12/2025",
+      time: "1:30 PM",
+      location: "Midwest Medical Evaluations",
+      caseId: "WC-2025-1002",
+      clientName: "Sarah Johnson",
+      notes: "Independent Medical Examination ordered by employer",
+      duration: "2 hours",
+      participants: []
+    },
+    {
+      id: "EVT-2025-008",
+      title: "Final Hearing",
+      type: "Hearing",
+      date: "04/15/2025",
+      time: "10:00 AM",
+      location: "Division of Workers Compensation",
+      caseId: "WC-2025-1008",
+      clientName: "Lisa Robinson",
+      notes: "Formal hearing for case determination",
+      duration: "3 hours",
+      participants: ["Judge Martinez", "Defense Attorney", "Court Reporter"]
+    },
+    {
+      id: "EVT-2025-009",
+      title: "Document Review Session",
+      type: "Internal",
+      date: "03/07/2025",
+      time: "3:00 PM",
+      location: "Office",
+      caseId: "WC-2025-1009",
+      clientName: "David Thompson",
+      notes: "Review medical records and prepare initial assessment",
+      duration: "2 hours",
+      participants: ["Robert Miller", "Paralegal Susan White"]
+    },
+    {
+      id: "EVT-2025-010",
+      title: "Expert Witness Prep",
+      type: "Meeting",
+      date: "03/25/2025",
+      time: "4:00 PM",
+      location: "Conference Call",
+      caseId: "WC-2025-1007",
+      clientName: "Thomas Martinez",
+      notes: "Prepare medical expert for upcoming testimony",
+      duration: "1.5 hours",
+      participants: ["Dr. Matthews", "Lisa Warren"]
+    }
+  ];
+
   // Filter cases based on search term and filters
   const filteredCases = allCases.filter(caseItem => {
     const matchesSearch = searchTerm === '' || 
