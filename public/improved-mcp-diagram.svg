@@ -84,6 +84,41 @@
         <animate attributeName="offset" values="0.5;1.5;0.5" dur="2s" repeatCount="indefinite"/>
       </stop>
     </linearGradient>
+    
+    <!-- Arrow markers for bidirectional connections -->
+    <marker id="blueArrowStart" markerWidth="10" markerHeight="10" refX="3" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M10,0 L10,10 L0,5 z" fill="#3B82F6" />
+    </marker>
+    <marker id="blueArrowEnd" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L0,10 L10,5 z" fill="#3B82F6" />
+    </marker>
+    
+    <marker id="greenArrowStart" markerWidth="10" markerHeight="10" refX="3" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M10,0 L10,10 L0,5 z" fill="#10B981" />
+    </marker>
+    <marker id="greenArrowEnd" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L0,10 L10,5 z" fill="#10B981" />
+    </marker>
+    
+    <marker id="redArrowStart" markerWidth="10" markerHeight="10" refX="3" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M10,0 L10,10 L0,5 z" fill="#EF4444" />
+    </marker>
+    <marker id="redArrowEnd" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L0,10 L10,5 z" fill="#EF4444" />
+    </marker>
+    
+    <!-- Simplified arrow markers that will work more reliably -->
+    <marker id="blueArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L0,10 L10,5 z" fill="#3B82F6" />
+    </marker>
+    
+    <marker id="greenArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L0,10 L10,5 z" fill="#10B981" />
+    </marker>
+    
+    <marker id="redArrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+      <path d="M0,0 L0,10 L10,5 z" fill="#EF4444" />
+    </marker>
   </defs>
   
   <!-- Add animation styles -->
@@ -165,26 +200,62 @@
   <text x="450" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white" font-weight="bold">Law Firm</text>
   <text x="450" y="258" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">Systems</text>
   
-  <!-- Connection Lines with Laser Animation -->
-  <!-- Attorney to AI Platform -->
-  <path d="M400,135 C300,135 250,135 200,135" stroke="url(#animatedBlueGradient)" stroke-width="4" fill="none" class="laser-path flow-reverse" filter="url(#blueGlow)" />
-  <path d="M200,125 C250,125 300,125 400,125" stroke="url(#animatedBlueGradient)" stroke-width="4" fill="none" class="laser-path flow-forward" filter="url(#blueGlow)" />
+  <!-- Connection Lines with Bidirectional Arrows -->
+  <!-- Attorney to AI Platform: Bidirectional -->
+  <path d="M400,130 C300,130 250,130 200,130" stroke="url(#animatedBlueGradient)" stroke-width="4" fill="none" 
+        marker-start="url(#blueArrowStart)" marker-end="url(#blueArrowEnd)" 
+        filter="url(#blueGlow)" />
   
-  <!-- AI Platform to MCP Servers -->
-  <path d="M150,160 C150,180 150,200 150,220" stroke="url(#animatedGreenGradient)" stroke-width="4" fill="none" class="laser-path flow-forward" filter="url(#greenGlow)" />
-  <path d="M140,220 C140,200 140,180 140,160" stroke="url(#animatedGreenGradient)" stroke-width="4" fill="none" class="laser-path flow-reverse" filter="url(#greenGlow)" />
+  <!-- AI Platform to MCP Servers: Bidirectional -->
+  <path d="M145,160 C145,180 145,200 145,220" stroke="url(#animatedGreenGradient)" stroke-width="4" fill="none" 
+        marker-start="url(#greenArrowStart)" marker-end="url(#greenArrowEnd)" 
+        filter="url(#greenGlow)" />
   
-  <!-- MCP Servers to Law Firm Systems -->
-  <path d="M200,245 C300,245 340,245 400,245" stroke="url(#animatedRedGradient)" stroke-width="4" fill="none" class="laser-path flow-forward" filter="url(#redGlow)" />
-  <path d="M400,235 C340,235 300,235 200,235" stroke="url(#animatedRedGradient)" stroke-width="4" fill="none" class="laser-path flow-reverse" filter="url(#redGlow)" />
+  <!-- MCP Servers to Law Firm Systems: Bidirectional -->
+  <path d="M200,240 C300,240 340,240 400,240" stroke="url(#animatedRedGradient)" stroke-width="4" fill="none" 
+        marker-start="url(#redArrowStart)" marker-end="url(#redArrowEnd)" 
+        filter="url(#redGlow)" />
   
-  <!-- SMIL Animation alternative for browsers that support it -->
-  <path d="M400,135 C300,135 250,135 200,135" stroke="#3B82F6" stroke-width="4" fill="none" filter="url(#blueGlow)" stroke-dasharray="5,5">
-    <animate attributeName="stroke-dashoffset" from="10" to="0" dur="1s" repeatCount="indefinite" />
-  </path>
+  <!-- Keep the animated paths for visual effect but make them thinner -->
+  <path d="M400,135 C300,135 250,135 200,135" stroke="url(#animatedBlueGradient)" stroke-width="2" fill="none" class="laser-path flow-reverse" filter="url(#blueGlow)" />
+  <path d="M200,125 C250,125 300,125 400,125" stroke="url(#animatedBlueGradient)" stroke-width="2" fill="none" class="laser-path flow-forward" filter="url(#blueGlow)" />
+  
+  <path d="M150,160 C150,180 150,200 150,220" stroke="url(#animatedGreenGradient)" stroke-width="2" fill="none" class="laser-path flow-forward" filter="url(#greenGlow)" />
+  <path d="M140,220 C140,200 140,180 140,160" stroke="url(#animatedGreenGradient)" stroke-width="2" fill="none" class="laser-path flow-reverse" filter="url(#greenGlow)" />
+  
+  <path d="M200,245 C300,245 340,245 400,245" stroke="url(#animatedRedGradient)" stroke-width="2" fill="none" class="laser-path flow-forward" filter="url(#redGlow)" />
+  <path d="M400,235 C340,235 300,235 200,235" stroke="url(#animatedRedGradient)" stroke-width="2" fill="none" class="laser-path flow-reverse" filter="url(#redGlow)" />
+  
+  <!-- FIXED CONNECTION LINES: Clear, reliable connections with visible arrows -->
+  <!-- Clear visible lines first (show these regardless of animation support) -->
+  <g id="basic-connections">
+    <!-- Attorney to AI Platform -->
+    <path d="M400,130 L200,130" fill="none" stroke="#3B82F6" stroke-width="3" marker-end="url(#blueArrow)" />
+    <path d="M200,140 L400,140" fill="none" stroke="#3B82F6" stroke-width="3" marker-end="url(#blueArrow)" />
+    
+    <!-- AI Platform to MCP Servers -->
+    <path d="M130,160 L130,220" fill="none" stroke="#10B981" stroke-width="3" marker-end="url(#greenArrow)" />
+    <path d="M150,220 L150,160" fill="none" stroke="#10B981" stroke-width="3" marker-end="url(#greenArrow)" />
+    
+    <!-- MCP Servers to Law Firm Systems -->
+    <path d="M200,233 L400,233" fill="none" stroke="#EF4444" stroke-width="3" marker-end="url(#redArrow)" />
+    <path d="M400,247 L200,247" fill="none" stroke="#EF4444" stroke-width="3" marker-end="url(#redArrow)" />
+  </g>
+  
+  <!-- Keep animated paths for enhanced visualization if browser supports them -->
+  <g id="animated-effects" opacity="0.7">
+    <path d="M400,135 C300,135 250,135 200,135" stroke="url(#animatedBlueGradient)" stroke-width="2" fill="none" class="laser-path flow-reverse" />
+    <path d="M200,125 C250,125 300,125 400,125" stroke="url(#animatedBlueGradient)" stroke-width="2" fill="none" class="laser-path flow-forward" />
+    
+    <path d="M140,160 C140,180 140,200 140,220" stroke="url(#animatedGreenGradient)" stroke-width="2" fill="none" class="laser-path flow-forward" />
+    <path d="M160,220 C160,200 160,180 160,160" stroke="url(#animatedGreenGradient)" stroke-width="2" fill="none" class="laser-path flow-reverse" />
+    
+    <path d="M200,242 C300,242 340,242 400,242" stroke="url(#animatedRedGradient)" stroke-width="2" fill="none" class="laser-path flow-forward" />
+    <path d="M400,228 C340,228 300,228 200,228" stroke="url(#animatedRedGradient)" stroke-width="2" fill="none" class="laser-path flow-reverse" />
+  </g>
   
   <!-- Labels -->
-  <text x="300" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Natural Language Queries</text>
-  <text x="300" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Secure, Controlled Access</text>
-  <text x="200" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Process</text>
+  <text x="300" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Natural Language Communication</text>
+  <text x="300" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Two-Way Secure Access</text>
+  <text x="245" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#0E0606">Bidirectional Processing</text>
 </svg>
