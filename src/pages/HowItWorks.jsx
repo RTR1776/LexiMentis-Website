@@ -46,7 +46,7 @@ const HowItWorks = () => {
       <div className="py-16 bg-white dark:bg-secondary-800">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-secondary-900 dark:text-neutral-white mb-6">
+            <h2 className="text-3xl font-bold text-secondary-900 dark:text-white mb-6">
               The Model Context Protocol Advantage
             </h2>
             <p className="text-lg text-secondary-600 dark:text-neutral-300 max-w-3xl mx-auto">
@@ -57,7 +57,7 @@ const HowItWorks = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="flex flex-col items-center text-center md:items-start md:text-left">
               <Network className="h-16 w-16 text-accent-600 dark:text-accent-400 mb-6" />
-              <h3 className="text-2xl font-bold text-secondary-900 dark:text-neutral-white mb-4">
+              <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-4">
                 Seamless AI Integration
               </h3>
               <p className="text-secondary-600 dark:text-neutral-300">
@@ -67,7 +67,7 @@ const HowItWorks = () => {
             
             <div className="flex flex-col items-center text-center md:items-start md:text-left">
               <Lock className="h-16 w-16 text-accent-600 dark:text-accent-400 mb-6" />
-              <h3 className="text-2xl font-bold text-secondary-900 dark:text-neutral-white mb-4">
+              <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-4">
                 Secure Data Handling
               </h3>
               <p className="text-secondary-600 dark:text-neutral-300">
@@ -82,7 +82,7 @@ const HowItWorks = () => {
       <div className="py-16 bg-accent-50 dark:bg-accent-900/10">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-secondary-900 dark:text-neutral-white mb-6">
+            <h2 className="text-3xl font-bold text-secondary-900 dark:text-white mb-6">
               LexiMentis MCP Architecture
             </h2>
             <p className="text-lg text-secondary-600 dark:text-neutral-300 max-w-3xl mx-auto">
@@ -109,7 +109,7 @@ const HowItWorks = () => {
       {/* MCP Components Section */}
       <div className="py-16 bg-white dark:bg-secondary-800">
         <div className="container mx-auto px-6 max-w-6xl">
-          <h2 className="text-3xl font-bold text-secondary-900 dark:text-neutral-white mb-12 text-center">
+          <h2 className="text-3xl font-bold text-secondary-900 dark:text-white mb-12 text-center">
             Our Specialized MCP Servers
           </h2>
           
@@ -119,7 +119,7 @@ const HowItWorks = () => {
               <div className="h-14 w-14 rounded-full bg-neutral-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
                 <FileText className="h-6 w-6 text-accent-800 dark:text-accent-400" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 dark:text-neutral-white mb-3">
+              <h3 className="text-xl font-bold text-secondary-900 dark:text-white mb-3">
                 Document MCP
               </h3>
               <p className="text-secondary-600 dark:text-neutral-300 mb-4 flex-grow">
@@ -132,7 +132,7 @@ const HowItWorks = () => {
               <div className="h-14 w-14 rounded-full bg-neutral-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
                 <Database className="h-6 w-6 text-accent-800 dark:text-accent-400" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 dark:text-neutral-white mb-3">
+              <h3 className="text-xl font-bold text-secondary-900 dark:text-white mb-3">
                 Knowledge Base MCP
               </h3>
               <p className="text-secondary-600 dark:text-neutral-300 mb-4 flex-grow">
@@ -145,7 +145,7 @@ const HowItWorks = () => {
               <div className="h-14 w-14 rounded-full bg-neutral-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
                 <Brain className="h-6 w-6 text-accent-800 dark:text-accent-400" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 dark:text-neutral-white mb-3">
+              <h3 className="text-xl font-bold text-secondary-900 dark:text-white mb-3">
                 Medical Analysis MCP
               </h3>
               <p className="text-secondary-600 dark:text-neutral-300 mb-4 flex-grow">
@@ -158,7 +158,7 @@ const HowItWorks = () => {
               <div className="h-14 w-14 rounded-full bg-neutral-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
                 <ClipboardCheck className="h-6 w-6 text-accent-800 dark:text-accent-400" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 dark:text-neutral-white mb-3">
+              <h3 className="text-xl font-bold text-secondary-900 dark:text-white mb-3">
                 Forms MCP
               </h3>
               <p className="text-secondary-600 dark:text-neutral-300 mb-4 flex-grow">
@@ -171,7 +171,7 @@ const HowItWorks = () => {
               <div className="h-14 w-14 rounded-full bg-neutral-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
                 <Cpu className="h-6 w-6 text-accent-800 dark:text-accent-400" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 dark:text-neutral-white mb-3">
+              <h3 className="text-xl font-bold text-secondary-900 dark:text-white mb-3">
                 Workflow MCP
               </h3>
               <p className="text-secondary-600 dark:text-neutral-300 mb-4 flex-grow">
@@ -184,7 +184,7 @@ const HowItWorks = () => {
               <div className="h-14 w-14 rounded-full bg-neutral-100 dark:bg-accent-900/30 flex items-center justify-center mb-6">
                 <MessageSquare className="h-6 w-6 text-accent-800 dark:text-accent-400" />
               </div>
-              <h3 className="text-xl font-bold text-secondary-900 dark:text-neutral-white mb-3">
+              <h3 className="text-xl font-bold text-secondary-900 dark:text-white mb-3">
                 Assistant MCP
               </h3>
               <p className="text-secondary-600 dark:text-neutral-300 mb-4 flex-grow">
@@ -210,13 +210,13 @@ const HowItWorks = () => {
       {/* How It Works in Practice */}
       <div className="py-16 bg-accent-50 dark:bg-accent-900/10">
         <div className="container mx-auto px-6 max-w-6xl">
-          <h2 className="text-3xl font-bold text-secondary-900 dark:text-neutral-white mb-12 text-center">
+          <h2 className="text-3xl font-bold text-secondary-900 dark:text-white mb-12 text-center">
             How It Works in Practice
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="bg-white dark:bg-secondary-800 rounded-xl p-8 shadow-md">
-              <h3 className="text-xl font-bold text-secondary-900 dark:text-neutral-white mb-6 flex items-center">
+              <h3 className="text-xl font-bold text-secondary-900 dark:text-white mb-6 flex items-center">
                 <Zap className="h-6 w-6 text-accent-600 dark:text-accent-400 mr-3" />
                 Document Processing Example
               </h3>
@@ -256,7 +256,7 @@ const HowItWorks = () => {
             </div>
             
             <div className="bg-white dark:bg-secondary-800 rounded-xl p-8 shadow-md">
-              <h3 className="text-xl font-bold text-secondary-900 dark:text-neutral-white mb-6 flex items-center">
+              <h3 className="text-xl font-bold text-secondary-900 dark:text-white mb-6 flex items-center">
                 <Zap className="h-6 w-6 text-accent-600 dark:text-accent-400 mr-3" />
                 Legal Research Example
               </h3>

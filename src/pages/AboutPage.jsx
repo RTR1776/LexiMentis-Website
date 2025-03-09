@@ -60,7 +60,7 @@ const AboutPage = () => {
                 <div className="flex items-center p-4 bg-accent-50 dark:bg-accent-900/30 rounded-lg">
                   <Briefcase className="h-5 w-5 text-accent-800 dark:text-accent-400 mr-3" />
                   <div>
-                    <h3 className="font-semibold text-secondary-800 dark:text-neutral-200">Experience</h3>
+                    <h3 className="font-semibold text-secondary-800 dark:text-white">Experience</h3>
                     <p className="text-secondary-600 dark:text-neutral-400">20+ Years in Legal Operations</p>
                   </div>
                 </div>
@@ -68,7 +68,7 @@ const AboutPage = () => {
                 <div className="flex items-center p-4 bg-primary-50 dark:bg-primary-900/30 rounded-lg">
                   <FileText className="h-5 w-5 text-primary-500 dark:text-primary-400 mr-3" />
                   <div>
-                    <h3 className="font-semibold text-secondary-800 dark:text-neutral-200">Legal Spend Managed</h3>
+                    <h3 className="font-semibold text-secondary-800 dark:text-white">Legal Spend Managed</h3>
                     <p className="text-secondary-600 dark:text-neutral-400">1,000+ Law Firms, $500M+ Legal Spend</p>
                   </div>
                 </div>
@@ -76,7 +76,7 @@ const AboutPage = () => {
                 <div className="flex items-center p-4 bg-accent-50 dark:bg-accent-900/30 rounded-lg">
                   <Award className="h-5 w-5 text-accent-800 dark:text-accent-400 mr-3" />
                   <div>
-                    <h3 className="font-semibold text-secondary-800 dark:text-neutral-200">Education</h3>
+                    <h3 className="font-semibold text-secondary-800 dark:text-white">Education</h3>
                     <p className="text-secondary-600 dark:text-neutral-400">J.D., Washington University</p>
                     <p className="text-secondary-600 dark:text-neutral-400">B.S., University of Missouri</p>
                   </div>
@@ -87,7 +87,7 @@ const AboutPage = () => {
             {/* Column 2-3: Bio & Story */}
             <div className="md:col-span-2 space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-secondary-900 dark:text-neutral-white mb-4">L.J. Cox</h2>
+                <h2 className="text-2xl font-bold text-secondary-900 dark:text-white mb-4">L.J. Cox</h2>
                 <h3 className="text-xl text-accent-800 dark:text-accent-400 mb-6">Legal Operations & AI Consultant</h3>
                 
                 <div className="prose prose-lg dark:prose-invert max-w-none text-secondary-600 dark:text-neutral-300">
@@ -104,7 +104,7 @@ const AboutPage = () => {
               </div>
               
               <div className="border-t border-neutral-200 dark:border-secondary-700 pt-8">
-                <h3 className="text-2xl font-bold text-secondary-900 dark:text-neutral-white mb-4">Why Kansas and Missouri Workers Compensation?</h3>
+                <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-4">Why Kansas and Missouri Workers Compensation?</h3>
                 
                 <div className="prose prose-lg dark:prose-invert max-w-none text-secondary-600 dark:text-neutral-300">
                   <p>
@@ -117,7 +117,7 @@ const AboutPage = () => {
               </div>
               
               <div className="border-t border-neutral-200 dark:border-secondary-700 pt-8">
-                <h3 className="text-2xl font-bold text-secondary-900 dark:text-neutral-white mb-4">The Vision</h3>
+                <h3 className="text-2xl font-bold text-secondary-900 dark:text-white mb-4">The Vision</h3>
                 
                 <div className="prose prose-lg dark:prose-invert max-w-none text-secondary-600 dark:text-neutral-300">
                   <p>
@@ -136,12 +136,12 @@ const AboutPage = () => {
       {/* Expertise & Skills Section */}
       <div className="py-16 bg-neutral-50 dark:bg-secondary-900">
         <div className="container mx-auto px-6 max-w-6xl">
-          <h2 className="text-3xl font-bold text-secondary-900 dark:text-neutral-white mb-12 text-center">Expertise & Technical Skills</h2>
+          <h2 className="text-3xl font-bold text-secondary-900 dark:text-white mb-12 text-center">Expertise & Technical Skills</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white dark:bg-secondary-800 p-6 rounded-xl shadow-md border border-neutral-200 dark:border-secondary-700">
               <Briefcase className="h-10 w-10 text-accent-800 dark:text-accent-400 mb-4" />
-              <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200 mb-3">Legal Operations</h3>
+              <h3 className="text-xl font-bold text-secondary-800 dark:text-white mb-3">Legal Operations</h3>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5" />
@@ -164,7 +164,7 @@ const AboutPage = () => {
             
             <div className="bg-white dark:bg-secondary-800 p-6 rounded-xl shadow-md border border-neutral-200 dark:border-secondary-700">
               <Gem className="h-10 w-10 text-accent-800 dark:text-accent-400 mb-4" />
-              <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200 mb-3">AI & Technical Skills</h3>
+              <h3 className="text-xl font-bold text-secondary-800 dark:text-white mb-3">AI & Technical Skills</h3>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5" />
@@ -187,7 +187,7 @@ const AboutPage = () => {
             
             <div className="bg-white dark:bg-secondary-800 p-6 rounded-xl shadow-md border border-neutral-200 dark:border-secondary-700">
               <Book className="h-10 w-10 text-accent-800 dark:text-accent-400 mb-4" />
-              <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200 mb-3">Legal Practice</h3>
+              <h3 className="text-xl font-bold text-secondary-800 dark:text-white mb-3">Legal Practice</h3>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5" />
@@ -210,7 +210,7 @@ const AboutPage = () => {
             
             <div className="bg-white dark:bg-secondary-800 p-6 rounded-xl shadow-md border border-neutral-200 dark:border-secondary-700">
               <Users className="h-10 w-10 text-accent-800 dark:text-accent-400 mb-4" />
-              <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200 mb-3">Leadership</h3>
+              <h3 className="text-xl font-bold text-secondary-800 dark:text-white mb-3">Leadership</h3>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5" />
@@ -233,7 +233,7 @@ const AboutPage = () => {
             
             <div className="bg-white dark:bg-secondary-800 p-6 rounded-xl shadow-md border border-neutral-200 dark:border-secondary-700">
               <Star className="h-10 w-10 text-accent-800 dark:text-accent-400 mb-4" />
-              <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200 mb-3">Analytics</h3>
+              <h3 className="text-xl font-bold text-secondary-800 dark:text-white mb-3">Analytics</h3>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <CheckCircle className="h-5 w-5 text-primary-500 dark:text-primary-400 mr-2 flex-shrink-0 mt-0.5" />
@@ -259,7 +259,7 @@ const AboutPage = () => {
                 <div className="rounded-full bg-accent-100 dark:bg-accent-900/30 w-16 h-16 flex items-center justify-center mb-4">
                   <span className="text-3xl font-bold text-accent-800 dark:text-accent-400">WC</span>
                 </div>
-                <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200 mb-3">Kansas Expertise</h3>
+                <h3 className="text-xl font-bold text-secondary-800 dark:text-white mb-3">Kansas Expertise</h3>
                 <p className="text-secondary-600 dark:text-neutral-300 mb-4">
                   Specialized knowledge of Missouri and Kansas specific workers compensation regulations, procedures, and precedents, combined with a comprehensive database of decisions and forms.
                 </p>
@@ -272,7 +272,7 @@ const AboutPage = () => {
       {/* Career Highlights Timeline */}
       <div className="py-16 bg-white dark:bg-secondary-800">
         <div className="container mx-auto px-6 max-w-6xl">
-          <h2 className="text-3xl font-bold text-secondary-900 dark:text-neutral-white mb-12 text-center">Career Highlights</h2>
+          <h2 className="text-3xl font-bold text-secondary-900 dark:text-white mb-12 text-center">Career Highlights</h2>
           
           <div className="relative">
             {/* Timeline line */}
@@ -282,7 +282,7 @@ const AboutPage = () => {
               {/* 2024 - Present */}
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="lg:w-1/2 lg:pr-16 text-right hidden lg:block">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Legal Operations & AI Consultant</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Legal Operations & AI Consultant</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">LexiMentis</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Designing AI-driven workflows and implementing RAG pipelines for specialized legal tasks.
@@ -294,7 +294,7 @@ const AboutPage = () => {
                 </div>
                 
                 <div className="lg:w-1/2 lg:pl-16 block lg:hidden mt-4 lg:mt-0">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Legal Operations & AI Consultant</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Legal Operations & AI Consultant</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">LexiMentis</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Designing AI-driven workflows and implementing RAG pipelines for specialized legal tasks.
@@ -305,7 +305,7 @@ const AboutPage = () => {
               {/* 2022 - 2024 */}
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="lg:w-1/2 lg:pr-16 block lg:hidden mt-4 lg:mt-0">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Legal Spend Management Specialist</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Legal Spend Management Specialist</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">EMC Insurance</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Oversaw $50M+ in legal spend and 500+ law firms, implementing data-driven reporting frameworks.
@@ -317,7 +317,7 @@ const AboutPage = () => {
                 </div>
                 
                 <div className="lg:w-1/2 lg:pl-16 text-left hidden lg:block">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Legal Spend Management Specialist</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Legal Spend Management Specialist</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">EMC Insurance</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Oversaw $50M+ in legal spend and 500+ law firms, implementing data-driven reporting frameworks.
@@ -328,7 +328,7 @@ const AboutPage = () => {
               {/* 2018 - 2022 */}
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="lg:w-1/2 lg:pr-16 text-right hidden lg:block">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Director of Legal Invoice Review</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Director of Legal Invoice Review</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">AIG</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Led team of 10 professionals overseeing $500M+ in annual legal bill review, doubling savings through analytics.
@@ -340,7 +340,7 @@ const AboutPage = () => {
                 </div>
                 
                 <div className="lg:w-1/2 lg:pl-16 block lg:hidden mt-4 lg:mt-0">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Director of Legal Invoice Review</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Director of Legal Invoice Review</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">AIG</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Led team of 10 professionals overseeing $500M+ in annual legal bill review, doubling savings through analytics.
@@ -351,7 +351,7 @@ const AboutPage = () => {
               {/* 2007 - 2018 */}
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="lg:w-1/2 lg:pr-16 block lg:hidden mt-4 lg:mt-0">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Legal Auditor</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Legal Auditor</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">AIG</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Conducted detailed audits of panel and staff counsel firms, recovering millions in savings.
@@ -363,7 +363,7 @@ const AboutPage = () => {
                 </div>
                 
                 <div className="lg:w-1/2 lg:pl-16 text-left hidden lg:block">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Legal Auditor</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Legal Auditor</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">AIG</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Conducted detailed audits of panel and staff counsel firms, recovering millions in savings.
@@ -374,7 +374,7 @@ const AboutPage = () => {
               {/* 2000 - 2007 */}
               <div className="flex flex-col lg:flex-row items-center">
                 <div className="lg:w-1/2 lg:pr-16 text-right hidden lg:block">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Associate Attorney</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Associate Attorney</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">Law Firm Practice</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Practiced at Shook Hardy & Bacon and Rasmussen Willis, focusing on complex litigation and product liability.
@@ -386,7 +386,7 @@ const AboutPage = () => {
                 </div>
                 
                 <div className="lg:w-1/2 lg:pl-16 block lg:hidden mt-4 lg:mt-0">
-                  <h3 className="text-xl font-bold text-secondary-800 dark:text-neutral-200">Associate Attorney</h3>
+                  <h3 className="text-xl font-bold text-secondary-800 dark:text-white">Associate Attorney</h3>
                   <p className="text-accent-800 dark:text-accent-400 font-medium">Law Firm Practice</p>
                   <p className="text-secondary-600 dark:text-neutral-300 mt-2">
                     Practiced at Shook Hardy & Bacon and Rasmussen Willis, focusing on complex litigation and product liability.
@@ -401,7 +401,7 @@ const AboutPage = () => {
       {/* CTA Section */}
       <div className="py-16 bg-accent-50 dark:bg-accent-900/30">
         <div className="container mx-auto px-6 max-w-3xl text-center">
-          <h2 className="text-3xl font-bold text-secondary-900 dark:text-neutral-white mb-4">Ready to Transform Your Workers Comp Practice?</h2>
+          <h2 className="text-3xl font-bold text-secondary-900 dark:text-white mb-4">Ready to Transform Your Workers Comp Practice?</h2>
           <p className="text-lg text-secondary-600 dark:text-neutral-300 mb-8">
             Schedule a personalized consultation to see how my expertise and AI solutions can reduce your administrative burden and improve outcomes.
           </p>
