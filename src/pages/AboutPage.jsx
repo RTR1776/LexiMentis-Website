@@ -49,7 +49,7 @@ const AboutPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* Column 1: Profile Image & Stats */}
             <div className="md:col-span-1">
-              <div className="aspect-square bg-neutral-200 dark:bg-secondary-700 rounded-xl mb-6 overflow-hidden">
+              <div className="aspect-square bg-neutral-200 dark:bg-secondary-700 rounded-xl mb-6 overflow-hidden border-4 border-red-500 dark:border-accent-400">
                 <img src={profilePic} alt="Profile" className="object-cover w-full h-full" />
                 <div className="h-full w-full bg-gradient-to-br from-accent-600 to-accent-800 flex items-center justify-center">
                   <span className="text-3xl font-bold text-white">LJ</span>
