@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Clock, ArrowRight, Check, CalendarDays } from 'lucide-react';
+import { getCalendlyUrl } from '../utils/env';
 
 const BookingCalendar = () => {
   const [contactInfo, setContactInfo] = useState({ name: '', email: '', company: '', message: '' });
@@ -7,6 +8,7 @@ const BookingCalendar = () => {
   const [calendlyLoaded, setCalendlyLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const calendlyRef = useRef(null);
+  const calendlyUrl = getCalendlyUrl();
 
   // Load Calendly script
   useEffect(() => {
@@ -53,7 +55,7 @@ const BookingCalendar = () => {
       }
       
       window.Calendly.initInlineWidget({
-        url: 'https://calendly.com/lj-cox-leximentis/30min',
+        url: calendlyUrl,
         parentElement: calendlyRef.current,
         prefill: {
           name: contactInfo.name,
@@ -80,7 +82,7 @@ const BookingCalendar = () => {
       console.error("Error initializing inline widget:", error);
       setApiError("Failed to load the calendar. Please try again later.");
     }
-  }, [calendlyLoaded, contactInfo]);
+  }, [calendlyLoaded, contactInfo, calendlyUrl]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -92,7 +94,7 @@ const BookingCalendar = () => {
     if (typeof window !== 'undefined' && window.Calendly) {
       try {
         window.Calendly.initPopupWidget({
-          url: 'https://calendly.com/lj-cox-leximentis/30min',
+          url: calendlyUrl,
           prefill: {
             name: contactInfo.name,
             email: contactInfo.email,
@@ -136,7 +138,7 @@ const BookingCalendar = () => {
           // Try opening again after script loads
           if (window.Calendly) {
             window.Calendly.initPopupWidget({
-              url: 'https://calendly.com/lj-cox-leximentis/30min',
+              url: calendlyUrl,
               prefill: {
                 name: contactInfo.name,
                 email: contactInfo.email,

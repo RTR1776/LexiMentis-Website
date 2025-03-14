@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Send, Download, RefreshCw, Info, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getApiUrl } from '../utils/env';
 
 const AIDemo = () => {
   const [inputValue, setInputValue] = useState('');
@@ -13,6 +14,7 @@ const AIDemo = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
   const [showLimitWarning, setShowLimitWarning] = useState(false);
+  const apiUrl = getApiUrl();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +36,7 @@ const AIDemo = () => {
     
     try {
       // Replace the existing Datastax Langflow endpoint
-      const response = await fetch('/api/mcp-assistant', {
+      const response = await fetch(`${apiUrl}/api/mcp-assistant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
