@@ -12,17 +12,20 @@
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
     "chart.js": "^4.3.3",
+    "loader-utils": ">=1.4.2",
     "lucide-react": "^0.477.0",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^6.14.2",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "recharts": "^2.15.1",
     "sitemap": "^8.0.0",
     "tailwindcss": "^3.3.3",
-    "three": "^0.174.0"
+    "three": "^0.174.0",
+    "nth-check": ">=2.0.1",
+    "postcss": ">=8.4.31"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -57,7 +60,9 @@
     "@types/three": "^0.174.0",
     "autoprefixer": "^10.4.14",
     "babel-loader": "^10.0.0",
-    "postcss": "^8.4.27",
-    "typescript": "^4.9.5"
+    "loader-utils": ">=1.4.2",
+    "typescript": "^4.9.5",
+    "nth-check": ">=2.0.1",
+    "postcss": ">=8.4.31"
   }
 }
