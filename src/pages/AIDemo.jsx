@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Send, Download, RefreshCw, Info, AlertTriangle, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { getApiUrl } from '../utils/env';
 
 const AIDemo = () => {
   const [inputValue, setInputValue] = useState('');
@@ -13,6 +14,7 @@ const AIDemo = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
   const [showLimitWarning, setShowLimitWarning] = useState(false);
+  const apiUrl = getApiUrl();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +36,7 @@ const AIDemo = () => {
     
     try {
       // Replace the existing Datastax Langflow endpoint
-      const response = await fetch('/api/mcp-assistant', {
+      const response = await fetch(`${apiUrl}/api/mcp-assistant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -96,7 +98,7 @@ const AIDemo = () => {
               <div>
                 <h2 className="text-2xl font-bold text-secondary-900 dark:text-neutral-100">AI Workers Comp Assistant</h2>
                 <p className="text-secondary-600 dark:text-neutral-300">
-                  Demo version - Try asking about Kansas and Missouri WC laws, benefits, or forms
+                  Demo version - Try asking about any Kansas workers compensation appeals opinions
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex items-center text-sm">
@@ -209,7 +211,7 @@ const AIDemo = () => {
                 <div className="flex items-center">
                   <Info className="h-3 w-3 mr-1" />
                   <span>
-                    Demo mode: Responses are powered by a Neon Vector database with MCP.
+                    Demo mode: Responses are currently limited to Kansas workers compensation appeals opinions.
                   </span>
                 </div>
                 <div className="flex items-center">
