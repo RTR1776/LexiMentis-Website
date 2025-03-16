@@ -12,9 +12,11 @@ import re
 import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
+from typing import Dict, List, Tuple, Optional, Any, Iterator
 from dataclasses import dataclass, asdict
 from concurrent.futures import ThreadPoolExecutor
+import tempfile
+import fitz
 
 # PDF Processing
 import PyPDF2
@@ -675,6 +677,118 @@ class PDFProcessor:
         logger.info(f"Saved metadata to {csv_path}")
         
         return output_dir
+
+    def process_gcs_bucket(
+        self,
+        bucket_name: str,
+        folder_path: str,
+        batch_size: int = 250,
+        review_callback: Optional[callable] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Process PDFs from a Google Cloud Storage bucket in batches.
+        
+        Args:
+            bucket_name: Name of the GCS bucket
+            folder_path: Path to the folder within the bucket
+            batch_size: Number of PDFs to process in each batch
+            review_callback: Optional callback function for batch review
+            
+        Returns:
+            List of processed document data
+        """
+        all_results = []
+        client = storage.Client()
+        bucket = client.get_bucket(bucket_name)
+        
+        # List all blobs in the specified folder and subfolders
+        blobs = list(bucket.list_blobs(prefix=folder_path))
+        pdf_blobs = [blob for blob in blobs if blob.name.lower().endswith('.pdf')]
+        
+        total_pdfs = len(pdf_blobs)
+        print(f"Found {total_pdfs} PDF files in bucket '{bucket_name}' under path '{folder_path}'")
+        
+        # Process PDFs in batches
+        for i in range(0, total_pdfs, batch_size):
+            batch_blobs = pdf_blobs[i:i+batch_size]
+            batch_results = self._process_gcs_batch(batch_blobs)
+            all_results.extend(batch_results)
+            
+            print(f"Processed batch {i//batch_size + 1} ({len(batch_blobs)} files)")
+            
+            # Allow for review after each batch if callback is provided
+            if review_callback and batch_results:
+                should_continue = review_callback(batch_results)
+                if not should_continue:
+                    print("Processing halted after review")
+                    break
+        
+        return all_results
+    
+    def _process_gcs_batch(self, blobs: List[storage.Blob]) -> List[Dict[str, Any]]:
+        """
+        Process a batch of PDF blobs from Google Cloud Storage.
+        
+        Args:
+            blobs: List of GCS blobs to process
+            
+        Returns:
+            List of processed document data
+        """
+        results = []
+        
+        for blob in blobs:
+            try:
+                # Create a temporary file to store the downloaded PDF
+                with tempfile.NamedTemporaryFile(suffix='.pdf', delete=False) as temp_file:
+                    temp_path = temp_file.name
+                    blob.download_to_filename(temp_path)
+                
+                # Process the PDF
+                doc_data = self.process_pdf(temp_path)
+                
+                # Add source information
+                doc_data['source'] = {
+                    'bucket': blob.bucket.name,
+                    'path': blob.name,
+                    'size': blob.size,
+                    'updated': blob.updated.isoformat() if blob.updated else None
+                }
+                
+                results.append(doc_data)
+                
+                # Clean up the temporary file
+                os.unlink(temp_path)
+            except Exception as e:
+                print(f"Error processing {blob.name}: {str(e)}")
+                # Continue with the next file even if this one fails
+        
+        return results
+
+    def process_ks_wc_appeals(
+        self,
+        batch_size: int = 250,
+        review_callback: Optional[callable] = None
+    ) -> List[Dict[str, Any]]:
+        """
+        Process Kansas Workers' Compensation Appeal Decisions from the leximentis_mvp bucket.
+        
+        Args:
+            batch_size: Number of PDFs to process in each batch
+            review_callback: Optional callback function for batch review
+            
+        Returns:
+            List of processed document data
+        """
+        bucket_name = "leximentis_mvp"
+        folder_path = "KS WC Appeal Decisions"
+        
+        return self.process_gcs_bucket(
+            bucket_name=bucket_name,
+            folder_path=folder_path,
+            batch_size=batch_size,
+            review_callback=review_callback
+        )
 
 def main():
     """Main function to run the PDF processor."""
