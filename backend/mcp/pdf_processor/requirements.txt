@@ -1,5 +1,5 @@
 # Google Cloud
-google-cloud-storage>=2.0.0
+google-cloud-storage==2.14.0
 
 # PDF Processing
 PyPDF2>=3.0.0
