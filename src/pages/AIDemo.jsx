@@ -98,7 +98,7 @@ const AIDemo = () => {
               <div>
                 <h2 className="text-2xl font-bold text-secondary-900 dark:text-neutral-100">AI Workers Comp Assistant</h2>
                 <p className="text-secondary-600 dark:text-neutral-300">
-                  Demo version - Try asking about Kansas and Missouri WC laws, benefits, or forms
+                  Demo version - Try asking about any Kansas workers compensation appeals opinions
                 </p>
               </div>
               <div className="mt-4 sm:mt-0 flex items-center text-sm">
@@ -211,7 +211,7 @@ const AIDemo = () => {
                 <div className="flex items-center">
                   <Info className="h-3 w-3 mr-1" />
                   <span>
-                    Demo mode: Responses are powered by a Neon Vector database with MCP.
+                    Demo mode: Responses are currently limited to Kansas workers compensation appeals opinions.
                   </span>
                 </div>
                 <div className="flex items-center">
