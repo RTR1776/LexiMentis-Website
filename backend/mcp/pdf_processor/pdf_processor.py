@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 PDF Processor for Workers Compensation Appeal Board Documents
 ------------------------------------------------------------
