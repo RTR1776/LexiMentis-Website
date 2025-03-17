@@ -2,9 +2,7 @@
 PDF Processor for Workers Compensation Appeal Board Documents
 ------------------------------------------------------------
 This script processes PDF documents from Google Cloud Storage,
-extracts and cleans text, identifies key information like docket numbers,
-appeal numbers, and claimant information, and generates embeddings
-using BGE-L v1.5 for RAG applications.
+extracts text using PyMuPDF, and generates embeddings using BGE-L v1.5.
 """
 
 import os
@@ -15,15 +13,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Any, Iterator
 from dataclasses import dataclass, asdict
-from concurrent.futures import ThreadPoolExecutor
 import tempfile
-import fitz
-
-# PDF Processing
-import PyPDF2
-import pdfplumber
-from pdf2image import convert_from_path
-import pytesseract
+import fitz  # PyMuPDF
 
 # Google Cloud
 from google.cloud import storage
@@ -166,20 +157,11 @@ class GCSHandler:
             raise
 
 class PDFExtractor:
-    """Extracts text from PDF documents using multiple methods."""
-    
-    def __init__(self, ocr_enabled: bool = True):
-        """
-        Initialize PDF extractor.
-        
-        Args:
-            ocr_enabled: Whether to use OCR for scanned PDFs
-        """
-        self.ocr_enabled = ocr_enabled
+    """Extracts text from PDF documents using PyMuPDF."""
     
     def extract_text(self, pdf_path: str) -> str:
         """
-        Extract text from a PDF using multiple methods and return the best result.
+        Extract text from a PDF using PyMuPDF.
         
         Args:
             pdf_path: Path to the PDF file
@@ -187,55 +169,15 @@ class PDFExtractor:
         Returns:
             Extracted text
         """
-        # Try different extraction methods
-        extraction_methods = [
-            self._extract_with_pypdf2,
-            self._extract_with_pdfplumber
-        ]
-        
-        if self.ocr_enabled:
-            extraction_methods.append(self._extract_with_ocr)
-        
-        results = []
-        for method in extraction_methods:
-            try:
-                text = method(pdf_path)
-                results.append((text, len(text)))
-            except Exception as e:
-                logger.warning(f"Extraction method {method.__name__} failed: {e}")
-        
-        if not results:
-            logger.error(f"All extraction methods failed for {pdf_path}")
+        try:
+            text = ""
+            with fitz.open(pdf_path) as doc:
+                for page in doc:
+                    text += page.get_text() + "\n"
+            return text
+        except Exception as e:
+            logger.error(f"Failed to extract text from {pdf_path}: {e}")
             return ""
-        
-        # Return the result with the most text
-        results.sort(key=lambda x: x[1], reverse=True)
-        return results[0][0]
-    
-    def _extract_with_pypdf2(self, pdf_path: str) -> str:
-        """Extract text using PyPDF2."""
-        text = ""
-        with open(pdf_path, 'rb') as file:
-            reader = PyPDF2.PdfReader(file)
-            for page in reader.pages:
-                text += page.extract_text() + "\n"
-        return text
-    
-    def _extract_with_pdfplumber(self, pdf_path: str) -> str:
-        """Extract text using pdfplumber."""
-        text = ""
-        with pdfplumber.open(pdf_path) as pdf:
-            for page in pdf.pages:
-                text += page.extract_text() or "" + "\n"
-        return text
-    
-    def _extract_with_ocr(self, pdf_path: str) -> str:
-        """Extract text using OCR (Tesseract)."""
-        text = ""
-        images = convert_from_path(pdf_path)
-        for image in images:
-            text += pytesseract.image_to_string(image) + "\n"
-        return text
 
 class DocumentProcessor:
     """Processes extracted text to identify document structure and metadata."""
@@ -513,7 +455,6 @@ class PDFProcessor:
                  gcs_credentials_path: Optional[str] = None,
                  gcs_bucket_name: str = None,
                  local_data_dir: str = "data",
-                 use_ocr: bool = True,
                  use_bge: bool = True,
                  bge_model_name: str = "BAAI/bge-large-en-v1.5"):
         """
@@ -523,7 +464,6 @@ class PDFProcessor:
             gcs_credentials_path: Path to GCS credentials JSON file
             gcs_bucket_name: Name of the GCS bucket
             local_data_dir: Directory to store downloaded and processed files
-            use_ocr: Whether to use OCR for scanned PDFs
             use_bge: Whether to use BGE for embeddings
             bge_model_name: Name of the BGE model
         """
@@ -536,7 +476,7 @@ class PDFProcessor:
             bucket_name=gcs_bucket_name
         )
         
-        self.pdf_extractor = PDFExtractor(ocr_enabled=use_ocr)
+        self.pdf_extractor = PDFExtractor()
         self.doc_processor = DocumentProcessor()
         
         self.use_bge = use_bge
@@ -781,23 +721,25 @@ class PDFProcessor:
 
     def process_ks_wc_appeals(
         self,
-        batch_size: int = 250,
+        batch_size: int = 10,
         review_callback: Optional[callable] = None,
-        max_documents: Optional[int] = None
+        max_documents: int = 10
     ) -> List[Dict[str, Any]]:
         """
         Process Kansas Workers' Compensation Appeal Decisions from the leximentis_mvp bucket.
         
         Args:
-            batch_size: Number of PDFs to process in each batch
+            batch_size: Number of PDFs to process in each batch (default: 10)
             review_callback: Optional callback function for batch review
-            max_documents: Maximum number of PDFs to process (None for all)
+            max_documents: Maximum number of PDFs to process (default: 10)
             
         Returns:
             List of processed document data
         """
         bucket_name = "leximentis_mvp"
         folder_path = "KS WC Appeal Decisions"
+        
+        logger.info(f"Processing {max_documents} documents from {bucket_name}/{folder_path}")
         
         return self.process_gcs_bucket(
             bucket_name=bucket_name,
@@ -822,8 +764,6 @@ def main():
                         help="Maximum number of PDFs to process")
     parser.add_argument("--num-workers", type=int, default=4, 
                         help="Number of worker threads")
-    parser.add_argument("--use-ocr", action="store_true", 
-                        help="Use OCR for scanned PDFs")
     parser.add_argument("--use-bge", action="store_true", 
                         help="Use BGE for embeddings")
     parser.add_argument("--bge-model", type=str, default="BAAI/bge-large-en-v1.5", 
@@ -836,7 +776,6 @@ def main():
         gcs_credentials_path=args.gcs_credentials,
         gcs_bucket_name=args.gcs_bucket,
         local_data_dir=args.local_dir,
-        use_ocr=args.use_ocr,
         use_bge=args.use_bge,
         bge_model_name=args.bge_model
     )

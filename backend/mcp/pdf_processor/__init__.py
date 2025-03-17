@@ -1,20 +1,8 @@
 """
-PDF Processor for Workers Compensation Appeal Board Documents
-------------------------------------------------------------
-This package provides tools for processing PDF documents from Google Cloud Storage,
-extracting key information, and generating embeddings for RAG applications.
+PDF Processor module for LexiMentis workers' compensation documents.
 """
 
-from .pdf_processor import (
-    DocumentMetadata,
-    ProcessedDocument,
-    GCSHandler,
-    PDFExtractor,
-    DocumentProcessor,
-    BGEEmbedder,
-    PDFProcessor
-)
+from .pdf_processor import PDFProcessor
+from .data_processing_pipeline_main import main
 
-__version__ = "0.1.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com" 
+__all__ = ['PDFProcessor', 'main'] 

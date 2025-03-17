@@ -2,10 +2,7 @@
 google-cloud-storage>=2.7.0
 
 # PDF Processing
-PyPDF2>=3.0.0
-pdfplumber>=0.7.0
-pdf2image>=1.16.0
-pytesseract>=0.3.10
+PyMuPDF>=1.22.5
 
 # Data Processing
 pandas>=2.0.0
@@ -14,18 +11,25 @@ numpy>=1.24.2
 # PyTorch and BGE Embedding
 torch>=1.10.0
 transformers>=4.33.2
+sentence-transformers>=2.2.2
 tqdm>=4.65.0
+
+# Database
+pymongo>=4.3.3
+
+# Utilities
+python-dotenv>=1.0.0
+scikit-learn>=1.2.2
 
 # Jupyter (for notebook)
 jupyter>=1.0.0
 notebook>=6.4.0
 
 # Utilities
-scikit-learn>=1.2.2
-pymongo>=4.3.3
-python-dotenv>=1.0.0
-PyMuPDF>=1.22.5
 Pillow>=9.4.0
 nltk>=3.8.1
-sentence-transformers>=2.2.2
-langchain>=0.0.200 
+langchain>=0.0.200
+
+# OCR
+pytesseract==0.3.10
+pdf2image==1.16.3 
