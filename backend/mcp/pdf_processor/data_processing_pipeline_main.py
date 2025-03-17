@@ -2,6 +2,19 @@ from backend.mcp.pdf_processor.pdf_processor import PDFProcessor
 import os
 from pymongo import MongoClient
 import logging
+import argparse
+
+# Set up command line arguments
+parser = argparse.ArgumentParser(description='Process PDFs and store in MongoDB')
+parser.add_argument('--batch-size', type=int, default=100, help='Number of documents per batch')
+parser.add_argument('--max-documents', type=int, default=100, help='Maximum number of documents to process')
+parser.add_argument('--mongodb-uri', type=str, default='mongodb://localhost:27017/', help='MongoDB connection URI')
+parser.add_argument('--db-name', type=str, default='leximentis', help='MongoDB database name')
+parser.add_argument('--collection', type=str, default='ks_wc_appeals', help='MongoDB collection name')
+parser.add_argument('--gcs-bucket', type=str, default='leximentis_mvp', help='GCS bucket name')
+parser.add_argument('--use-ocr', action='store_true', default=True, help='Use OCR for text extraction')
+parser.add_argument('--use-bge', action='store_true', default=True, help='Generate BGE embeddings')
+args = parser.parse_args()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -15,23 +28,23 @@ os.makedirs(output_dir, exist_ok=True)
 
 # MongoDB connection
 try:
-    mongo_client = MongoClient("mongodb://localhost:27017/")  # Update with your MongoDB connection string if different
-    db = mongo_client["leximentis"]
-    collection = db["ks_wc_appeals"]
-    logger.info("Successfully connected to MongoDB")
+    mongo_client = MongoClient(args.mongodb_uri)
+    db = mongo_client[args.db_name]
+    collection = db[args.collection]
+    logger.info(f"Successfully connected to MongoDB - {args.db_name}.{args.collection}")
 except Exception as e:
     logger.error(f"Failed to connect to MongoDB: {str(e)}")
     raise
 
 # Initialize the processor
 processor = PDFProcessor(
-    gcs_bucket_name="leximentis_mvp",
+    gcs_bucket_name=args.gcs_bucket,
     local_data_dir=output_dir,
-    use_ocr=True,  # Enable OCR for scanned PDFs
-    use_bge=True   # Enable embeddings
+    use_ocr=args.use_ocr,
+    use_bge=args.use_bge
 )
 
-# Define a review callback function (optional)
+# Define a review callback function
 def review_batch(batch_results):
     """Display batch summary and save results to MongoDB."""
     batch_num = len(os.listdir(output_dir)) + 1
@@ -57,11 +70,12 @@ def review_batch(batch_results):
     # Always continue with next batch
     return True
 
-# Process Kansas WC Appeal Decisions in batches of 100
+# Process Kansas WC Appeal Decisions in batches
+logger.info(f"Starting processing with batch size {args.batch_size}, max documents {args.max_documents}")
 results = processor.process_ks_wc_appeals(
-    batch_size=100,
+    batch_size=args.batch_size,
     review_callback=review_batch,
-    max_documents=100  # Limit to 100 documents total for testing
+    max_documents=args.max_documents
 )
 
 logger.info(f"Completed processing. Total documents processed: {len(results)}")
