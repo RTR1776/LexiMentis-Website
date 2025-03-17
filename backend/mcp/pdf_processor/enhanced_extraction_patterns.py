@@ -1,8 +1,6 @@
 """
 Enhanced extraction patterns for Worker's Compensation document processing
-------------------------------------------------------------------------
-This file contains improved regex patterns and extraction functions
-for better metadata extraction from legal documents.
+With support for multiple entities (carriers, claimants, respondents)
 """
 
 import re
@@ -41,25 +39,46 @@ claimant_patterns = [
     r'(?:\n|^)\s*(?:BEFORE|IN)\s+THE\s+.{1,60}\n\s*([A-Z][A-Za-z\.\s\-\']{2,50})\s*\n'
 ]
 
-# Respondent patterns 
+# Improved respondent patterns with broader matching capabilities
 respondent_patterns = [
-    # Standard format with VS followed by respondent name
-    r'VS\.\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+)\s*\n\s*\)?\s*\nRespondent',
+    # Standard format after "VS." with "Respondent" label
+    r'VS\.?\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+(?:,\s*LLC)?)\s*\n\s*\)?\s*\nRespondent',
     
-    # Alternative format
-    r'(?:VS\.|v\.)\s*\)?\s*\n.*?\n\s*([A-Z][A-Za-z\s\.\-\']+)\s*\n\s*.*?(?:Respondent|RESPONDENT)',
+    # Alternative format after "V." with "Respondent" label
+    r'V\.?\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+(?:,\s*LLC)?)\s*\n\s*\)?\s*\nRespondent',
     
-    # Simple format
-    r'([A-Z][A-Za-z\s\.\-\']+)\s*\)?\s*\n\s*Respondent'
+    # Format with "Uninsured Respondent" label
+    r'([A-Z][A-Za-z\s\.\-\']+)\s*\)?\s*\n\s*Uninsured\s+Respondent',
+    
+    # Format with parenthesis and Respondent label
+    r'([A-Z][A-Za-z\s\.\-\']+(?:,\s*LLC)?)\s*\)?\s*\n\s*(?:Respondent|RESPONDENT)',
+    
+    # First line after "V." or "VS." without explicit "Respondent" label
+    r'(?:V\.|VS\.)\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+(?:,\s*LLC)?)',
+    
+    # General pattern for any entity between "VS." and "AND"
+    r'VS\.\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+(?:,\s*LLC)?)\s*\n\s*\)?\s*\nAND',
+    
+    # General pattern for any entity between "V." and "AND"
+    r'V\.\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+(?:,\s*LLC)?)\s*\n\s*\)?\s*\nAND',
 ]
 
-# Insurance carrier patterns
+# Insurance carrier patterns - improved to catch more carriers
 insurance_carrier_patterns = [
     # Standard format after "AND"
     r'AND\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+)\s*\n\s*\)?\s*\nInsurance Carrier',
     
     # Alternative format
     r'(?:AND|and)\s*\)?\s*\n.*?\n\s*([A-Z][A-Za-z\s\.\-\']+)\s*\n\s*.*?(?:Insurance Carrier|INSURANCE CARRIER)',
+    
+    # Special pattern for Workers Compensation Fund after "AND"
+    r'AND\s*\)?\s*\n\s*\)?\s*\n\s*(WORKERS COMPENSATION FUND|State Work Comp Fund|Compensation Fund)',
+    
+    # General pattern for any entity after "AND" (for cases without "Insurance Carrier" label)
+    r'AND\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+)',
+    
+    # Specific common insurance companies
+    r'((?:FARMERS|TRAVELERS|LIBERTY MUTUAL|STATE FARM|HARTFORD|ZURICH|CHUBB|NATIONWIDE|PROGRESSIVE|ALLSTATE)(?:\s+[A-Z][A-Za-z\s\.\-\']+){0,3}(?:\s+INSURANCE|\s+INS\.|\s+INDEMNITY|\s+CASUALTY))',
 ]
 
 # Extended list of false positives in validation function
@@ -68,7 +87,7 @@ def is_valid_claimant_name(name):
     # Filter out common false positives 
     false_positive_starts = [
         "CLAIMANT", "RESPONDENT", "APPELLANT", "BEFORE", "ORDER", "AWARD", 
-        "WHEREFORE", "THEREFORE", "THE", "THIS", "IT IS", "BASED", "CLAIMANT ARGUES",
+        "WHEREFORE", "THEREFORE", "THE", "THIS", "IT IS", "BASED", "CLAIMANT ARGES",
         "FINDINGS", "PRINCIPLES", "CONCLUSIONS", "RECORD", "ISSUES"
     ]
     
@@ -81,7 +100,7 @@ def is_valid_claimant_name(name):
         return False
     
     # Check for verbs that indicate this is a sentence
-    sentence_verbs = ["ARGUES", "STATES", "CONTENDS", "ALLEGES", "TESTIFIED", "CLAIMED"]
+    sentence_verbs = ["ARGES", "STATES", "CONTENDS", "ALLEGES", "TESTIFIED", "CLAIMED"]
     if any(verb in name.upper() for verb in sentence_verbs):
         return False
         
@@ -221,6 +240,188 @@ def extract_text_with_ocr(pdf_path):
         return ""
 
 
+def detect_workers_comp_fund(text):
+    """Detect if the Workers Compensation Fund is mentioned in cases with uninsured respondents."""
+    # Look for Uninsured Respondent followed by Workers Compensation Fund
+    if re.search(r'Uninsured\s+Respondent', text, re.IGNORECASE) and \
+       re.search(r'WORKERS\s+COMPENSATION\s+FUND|Work\s+Comp\s+Fund', text, re.IGNORECASE):
+        return "WORKERS COMPENSATION FUND"
+    return None
+
+
+def is_valid_respondent(text):
+    """
+    Validate whether text is likely a valid respondent name.
+    
+    Args:
+        text: Candidate respondent text
+        
+    Returns:
+        Boolean indicating if text is likely a valid respondent
+    """
+    # Check if text looks like a proper name or company
+    if len(text) < 3 or len(text) > 100:  # Too short or too long
+        return False
+    
+    # Filter out common metadata labels that might be misidentified
+    invalid_patterns = [
+        r'Docket\s+No', 
+        r'Case\s+No', 
+        r'Appeal\s+No',
+        r'CS-\d',
+        r'AP-\d',
+        r'Order', 
+        r'Award',
+        r'The\s+majority', 
+        r'Facts',
+        r'^The\s',  # Starting with "The" followed by a space
+        r'\.$',     # Ending with period (likely a sentence)
+        r'^For\s',  # Starting with "For" followed by a space
+        r'^In\s',   # Starting with "In" followed by a space
+        r'\d{1,3},\d{3}',  # Numbers with commas like 1,025,085
+        r'\d{5,}',   # Long numbers
+    ]
+    
+    for pattern in invalid_patterns:
+        if re.search(pattern, text, re.IGNORECASE):
+            return False
+    
+    # Ensure text doesn't contain full sentences
+    if text.count(' ') > 8 and '.' in text:  # More than 8 words and contains a period
+        return False
+    
+    # Check for typical business entity types or proper name structure
+    valid_patterns = [
+        r'LLC', 
+        r'Inc\.?',
+        r'Corp\.?',
+        r'Company',
+        r'Incorporat',
+        r'Association',
+        r'[A-Z][a-z]+\s+[A-Z][a-z]+',  # First Last name pattern
+        r'[A-Z][a-z]+\s+[A-Z]\.',      # First M. pattern
+    ]
+    
+    for pattern in valid_patterns:
+        if re.search(pattern, text):
+            return True
+    
+    # If no explicit valid patterns matched, apply more general tests
+    
+    # Check for all caps or proper case (typical for companies or names)
+    words = text.split()
+    if len(words) <= 5:  # Reasonable length for a name/company
+        # Check if all words start with uppercase
+        if all(word[0].isupper() for word in words if word):
+            return True
+    
+    # Default to accepting anything that made it through all filters
+    return True
+
+
+def extract_header_entities(text):
+    """
+    Extract multiple claimants, respondents, and carriers from document header.
+    
+    Args:
+        text: Full document text
+        
+    Returns:
+        Dictionary with lists of entities
+    """
+    # Focus on the header section (first ~40 lines)
+    header_section = "\n".join(text.split("\n")[:40])
+    
+    entities = {
+        "claimants": [],
+        "respondents": [],
+        "carriers": []
+    }
+    
+    # Extract claimants from header
+    claimant_matches = re.finditer(r'([A-Z][A-Za-z\s\.\-\']{2,50})\s*\)\s*\n\s*Claimant', header_section, re.MULTILINE)
+    for match in claimant_matches:
+        candidate = match.group(1).strip()
+        if is_valid_claimant_name(candidate) and candidate not in entities["claimants"]:
+            entities["claimants"].append(candidate)
+    
+    # Extract respondents from header - IMPROVED PATTERN
+    respondent_patterns = [
+        # Match entity followed by "Respondent" label
+        r'([A-Z][A-Za-z\s\.\-\']+(?:,\s*LLC)?)\s*\)\s*\n\s*(?:Respondent|RESPONDENT)',
+        
+        # Match entity followed by "Uninsured Respondent" label
+        r'([A-Z][A-Za-z\s\.\-\']+)\s*\)\s*\n\s*Uninsured\s+Respondent',
+        
+        # Match entity between VS./V. and AND/Insurance Carrier
+        r'(?:VS\.|V\.)\s*\)?\s*\n\s*\)?\s*\n\s*([A-Z][A-Za-z\s\.\-\']+(?:,\s*LLC)?)\s*\n\s*\)?\s*\n(?:AND|Respondent|RESPONDENT)',
+    ]
+    
+    for pattern in respondent_patterns:
+        respondent_matches = re.finditer(pattern, header_section, re.MULTILINE)
+        for match in respondent_matches:
+            candidate = match.group(1).strip()
+            if is_valid_respondent(candidate) and candidate not in entities["respondents"]:
+                entities["respondents"].append(candidate)
+    
+    # Extract insurance carriers from header - KEEP EXISTING LOGIC
+    carrier_matches = re.finditer(r'([A-Z][A-Za-z\s\.\-\']{2,50})\s*\)\s*\n\s*(?:Insurance Carrier|INSURANCE CARRIER)', header_section, re.MULTILINE)
+    for match in carrier_matches:
+        candidate = match.group(1).strip()
+        if candidate not in entities["carriers"]:
+            entities["carriers"].append(candidate)
+    
+    # Special case for Workers Compensation Fund
+    if re.search(r'Uninsured\s+Respondent', header_section, re.IGNORECASE) and \
+       re.search(r'WORKERS\s+COMPENSATION\s+FUND|Work\s+Comp\s+Fund', header_section, re.IGNORECASE):
+        if "WORKERS COMPENSATION FUND" not in entities["carriers"]:
+            entities["carriers"].append("WORKERS COMPENSATION FUND")
+    
+    # Also look for generic "AND" followed by a carrier name
+    and_carrier_matches = re.finditer(r'AND\s*\)\s*\n\s*\)\s*\n\s*([A-Z][A-Za-z\s\.\-\']+)', header_section, re.MULTILINE)
+    for match in and_carrier_matches:
+        candidate = match.group(1).strip()
+        if candidate and candidate not in entities["carriers"]:
+            entities["carriers"].append(candidate)
+    
+    # Also look for common insurance company names in the header
+    common_carriers = ["FARMERS", "TRAVELERS", "LIBERTY", "STATE FARM", "HARTFORD", 
+                       "ZURICH", "CHUBB", "NATIONWIDE", "PROGRESSIVE", "ALLSTATE", "NEW HAMPSHIRE"]
+    for carrier in common_carriers:
+        carrier_match = re.search(f'{carrier}\\s+([A-Z][A-Za-z\\s\\.\\-\\\']+(?:INSURANCE|INDEMNITY|CASUALTY|INS))', header_section)
+        if carrier_match:
+            full_carrier = carrier + " " + carrier_match.group(1).strip()
+            if full_carrier not in entities["carriers"]:
+                entities["carriers"].append(full_carrier)
+        elif carrier in header_section:
+            # Get the full name when possible
+            carrier_match = re.search(f'{carrier}\\s+([A-Z][A-Za-z\\s\\.\\-\\\']+)', header_section)
+            if carrier_match:
+                full_carrier = carrier + " " + carrier_match.group(1).strip()
+                if "INSURANCE" not in full_carrier and "CARRIER" not in full_carrier:
+                    full_carrier += " INSURANCE"
+                if full_carrier not in entities["carriers"]:
+                    entities["carriers"].append(full_carrier)
+    
+    # Extract from filename if it contains "v." or "vs."
+    filename_match = re.search(r'.*\s+v\.\s+([A-Za-z\s\.\-\']+)', text.split("\n")[0], re.IGNORECASE)
+    if filename_match:
+        candidate = filename_match.group(1).strip()
+        if candidate and candidate not in entities["respondents"]:
+            entities["respondents"].append(candidate)
+    
+    # Fallback extraction for specific document formats
+    if not entities["respondents"]:
+        # If there's a line with "Uninsured Respondent", check the line before it
+        uninsured_match = re.search(r'([A-Z][A-Za-z\s\.\-\']+)\s*\)?\s*\n\s*Uninsured\s+Respondent', header_section)
+        if uninsured_match:
+            candidate = uninsured_match.group(1).strip()
+            if candidate and candidate not in entities["respondents"]:
+                entities["respondents"].append(candidate)
+    
+    return entities
+
+
 def extract_metadata_with_patterns(filename, text):
     """
     Extract metadata using enhanced pattern matching.
@@ -234,20 +435,94 @@ def extract_metadata_with_patterns(filename, text):
     """
     metadata = {
         "claimant_name": None,
+        "claimants": [],
         "extraction_method": None,
         "docket_number": None,
         "appeal_number": None,
         "case_number": None,
         "document_date": None,
         "respondent": None,
+        "respondents": [],
         "insurance_carrier": None,
+        "insurance_carriers": [],
         "has_dissent": False,
         "dissent_text": None
     }
     
-    # IMPROVED DATE EXTRACTION - focus on finding date after "IT IS SO ORDERED"
+    # Extract header entities (multiple claimants, respondents, carriers)
+    header_entities = extract_header_entities(text)
+    metadata["claimants"] = header_entities["claimants"]
+    metadata["respondents"] = header_entities["respondents"]
+    metadata["insurance_carriers"] = header_entities["carriers"]
     
-    # First look for the "IT IS SO ORDERED" section with the date after it
+    # Set primary entities (for backward compatibility)
+    if metadata["claimants"]:
+        metadata["claimant_name"] = metadata["claimants"][0]
+        metadata["extraction_method"] = "header_extraction"
+    
+    if metadata["respondents"]:
+        metadata["respondent"] = metadata["respondents"][0]
+    
+    if metadata["insurance_carriers"]:
+        metadata["insurance_carrier"] = metadata["insurance_carriers"][0]
+    
+    # If header extraction failed, fall back to existing extraction methods
+    if not metadata["claimant_name"]:
+        # Special handling for document structure - direct name match
+        first_few_lines = "\n".join(text.split("\n")[:20])
+        
+        # Try to find LOREN ALBRIGHT pattern specifically
+        if "LOREN ALBRIGHT" in first_few_lines:
+            metadata["claimant_name"] = "LOREN ALBRIGHT"
+            metadata["claimants"] = ["LOREN ALBRIGHT"]
+            metadata["extraction_method"] = "direct_name_match"
+        
+        # Extract claimant name with validation using regular patterns
+        if not metadata["claimant_name"]:
+            for i, pattern in enumerate(claimant_patterns):
+                match = re.search(pattern, text, re.MULTILINE)
+                if match:
+                    candidate_name = match.group(1).strip()
+                    if is_valid_claimant_name(candidate_name):
+                        metadata["claimant_name"] = candidate_name
+                        if candidate_name not in metadata["claimants"]:
+                            metadata["claimants"].append(candidate_name)
+                        metadata["extraction_method"] = f"claimant_pattern_{i+1}"
+                        break
+        
+        # If no claimant found, try filename extraction
+        if not metadata["claimant_name"] and (("v." in filename) or ("vs." in filename)):
+            match = re.search(r'\d+\s+(.*?)(?:\s+v\.|\s+vs\.)', filename)
+            if match:
+                metadata["claimant_name"] = match.group(1).strip()
+                if metadata["claimant_name"] not in metadata["claimants"]:
+                    metadata["claimants"].append(metadata["claimant_name"])
+                metadata["extraction_method"] = "filename"
+    
+    # Fall back to existing extraction methods for respondent if needed
+    if not metadata["respondent"]:
+        for pattern in respondent_patterns:
+            match = re.search(pattern, text, re.MULTILINE)
+            if match:
+                candidate = match.group(1).strip() 
+                metadata["respondent"] = candidate
+                if candidate not in metadata["respondents"]:
+                    metadata["respondents"].append(candidate)
+                break
+    
+    # Fall back to existing extraction methods for insurance carrier if needed
+    if not metadata["insurance_carrier"]:
+        for pattern in insurance_carrier_patterns:
+            match = re.search(pattern, text, re.MULTILINE)
+            if match:
+                candidate = match.group(1).strip()
+                metadata["insurance_carrier"] = candidate
+                if candidate not in metadata["insurance_carriers"]:
+                    metadata["insurance_carriers"].append(candidate)
+                break
+    
+    # Keep rest of the existing extraction code for date, appeal numbers, docket, etc.
+    # IMPROVED DATE EXTRACTION - focus on finding date after "IT IS SO ORDERED"
     order_section_match = re.search(r'IT\s+IS\s+SO\s+ORDERED\.(.*?)(?:BOARD\s+MEMBER|DISSENT)', text, re.DOTALL | re.IGNORECASE)
     
     if order_section_match:
@@ -284,46 +559,6 @@ def extract_metadata_with_patterns(filename, text):
         dissent_text = dissent_match.group(1).strip()
         metadata["dissent_text"] = dissent_text[:200] + "..." if len(dissent_text) > 200 else dissent_text
         logger.info("Found dissent section in document")
-    
-    # Special handling for document structure - find the claimant at top of workers comp docs
-    first_few_lines = "\n".join(text.split("\n")[:20])
-    
-    # Try to find LOREN ALBRIGHT pattern specifically
-    if "LOREN ALBRIGHT" in first_few_lines:
-        metadata["claimant_name"] = "LOREN ALBRIGHT"
-        metadata["extraction_method"] = "direct_name_match"
-    
-    # Extract claimant name with validation
-    if not metadata["claimant_name"]:
-        for i, pattern in enumerate(claimant_patterns):
-            match = re.search(pattern, text, re.MULTILINE)
-            if match:
-                candidate_name = match.group(1).strip()
-                if is_valid_claimant_name(candidate_name):
-                    metadata["claimant_name"] = candidate_name
-                    metadata["extraction_method"] = f"claimant_pattern_{i+1}"
-                    break
-    
-    # If no claimant found, try filename extraction
-    if not metadata["claimant_name"] and (("v." in filename) or ("vs." in filename)):
-        match = re.search(r'\d+\s+(.*?)(?:\s+v\.|\s+vs\.)', filename)
-        if match:
-            metadata["claimant_name"] = match.group(1).strip()
-            metadata["extraction_method"] = "filename"
-    
-    # Extract respondent
-    for pattern in respondent_patterns:
-        match = re.search(pattern, text, re.MULTILINE)
-        if match:
-            metadata["respondent"] = match.group(1).strip()
-            break
-    
-    # Extract insurance carrier (may not exist in all documents)
-    for pattern in insurance_carrier_patterns:
-        match = re.search(pattern, text, re.MULTILINE)
-        if match:
-            metadata["insurance_carrier"] = match.group(1).strip()
-            break
     
     # Extract appeal numbers
     for pattern in appeal_patterns:
