@@ -315,66 +315,58 @@ class DocumentProcessor:
         
         return cleaned_text
     
-    def _extract_metadata(self, 
-                         filename: str, 
-                         text: str) -> DocumentMetadata:
-        """
-        Extract metadata from document text.
-        
-        Args:
-            filename: Name of the PDF file
-            text: Cleaned document text
-            
-        Returns:
-            Document metadata
-        """
+    def _extract_metadata(self, filename: str, text: str) -> DocumentMetadata:
+        """Extract metadata from document text."""
         metadata = DocumentMetadata(filename=filename)
         
-        # Extract docket number from filename or text
-        if filename.startswith(tuple(str(i) for i in range(10))):
-            metadata.docket_number = re.search(r'^(\d+)', filename).group(1)
-        else:
-            docket_match = re.search(self.patterns['docket_number'], text)
-            if docket_match:
-                metadata.docket_number = docket_match.group(1)
-        
-        # Extract appeal number from filename or text
-        if filename.startswith('AP'):
-            metadata.appeal_number = re.search(r'^(AP\d+)', filename).group(1)
-        else:
-            appeal_match = re.search(self.patterns['appeal_number'], text)
-            if appeal_match:
-                metadata.appeal_number = appeal_match.group(1)
-        
-        # Extract case number
-        case_match = re.search(self.patterns['case_number'], text)
-        if case_match:
-            metadata.case_number = case_match.group(1)
-        
-        # Extract claimant name
-        claimant_match = re.search(self.patterns['claimant'], text)
-        if claimant_match:
-            metadata.claimant_name = claimant_match.group(1).strip()
-        
-        # Extract document title
-        title_match = re.search(self.patterns['document_title'], text)
-        if title_match:
-            metadata.document_title = title_match.group(0).strip()
-        
-        # Extract document date
-        date_match = re.search(self.patterns['document_date'], text)
-        if date_match:
-            metadata.document_date = date_match.group(1)
-        
-        # Determine document type based on content
-        if "DECISION" in text:
-            metadata.document_type = "Decision"
-        elif "OPINION" in text:
-            metadata.document_type = "Opinion"
-        elif "ORDER" in text:
-            metadata.document_type = "Order"
-        else:
-            metadata.document_type = "Unknown"
+        try:
+            # Extract docket number from filename or text
+            if filename.startswith(tuple(str(i) for i in range(10))):
+                docket_match = re.search(r'^(\d+)', filename)
+                if docket_match:
+                    metadata.docket_number = docket_match.group(1)
+            else:
+                docket_match = re.search(self.patterns['docket_number'], text)
+                if docket_match:
+                    metadata.docket_number = docket_match.group(1)
+            
+            # Extract appeal number from filename or text
+            if filename.startswith('AP'):
+                appeal_match = re.search(r'^(AP\d+)', filename)
+                if appeal_match:
+                    metadata.appeal_number = appeal_match.group(1)
+            else:
+                appeal_match = re.search(self.patterns['appeal_number'], text)
+                if appeal_match:
+                    metadata.appeal_number = appeal_match.group(1)
+            
+            # Rest of the metadata extraction with error handling
+            for field, pattern in [
+                ('case_number', self.patterns['case_number']),
+                ('claimant_name', self.patterns['claimant']),
+                ('document_title', self.patterns['document_title']),
+                ('document_date', self.patterns['document_date'])
+            ]:
+                try:
+                    match = re.search(pattern, text)
+                    if match:
+                        setattr(metadata, field, match.group(1).strip() if field != 'document_title' else match.group(0).strip())
+                except Exception as e:
+                    logger.warning(f"Failed to extract {field} from document: {e}")
+            
+            # Determine document type based on content
+            if "DECISION" in text:
+                metadata.document_type = "Decision"
+            elif "OPINION" in text:
+                metadata.document_type = "Opinion"
+            elif "ORDER" in text:
+                metadata.document_type = "Order"
+            else:
+                metadata.document_type = "Unknown"
+            
+        except Exception as e:
+            logger.error(f"Error extracting metadata from {filename}: {e}")
+            # Return metadata with at least the filename
         
         return metadata
     
