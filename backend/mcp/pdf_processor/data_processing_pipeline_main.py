@@ -3,11 +3,13 @@ import os
 from pymongo import MongoClient
 import logging
 import argparse
+import signal
+import sys
 
 # Set up command line arguments
 parser = argparse.ArgumentParser(description='Process PDFs and store in MongoDB')
-parser.add_argument('--batch-size', type=int, default=100, help='Number of documents per batch')
-parser.add_argument('--max-documents', type=int, default=100, help='Maximum number of documents to process')
+parser.add_argument('--batch-size', type=int, default=10, help='Number of documents per batch')
+parser.add_argument('--max-documents', type=int, default=10, help='Maximum number of documents to process')
 parser.add_argument('--mongodb-uri', type=str, default='mongodb://localhost:27017/', help='MongoDB connection URI')
 parser.add_argument('--db-name', type=str, default='leximentis', help='MongoDB database name')
 parser.add_argument('--collection', type=str, default='ks_wc_appeals', help='MongoDB collection name')
@@ -70,15 +72,48 @@ def review_batch(batch_results):
     # Always continue with next batch
     return True
 
-# Process Kansas WC Appeal Decisions in batches
-logger.info(f"Starting processing with batch size {args.batch_size}, max documents {args.max_documents}")
-results = processor.process_ks_wc_appeals(
-    batch_size=args.batch_size,
-    review_callback=review_batch,
-    max_documents=args.max_documents
-)
+def signal_handler(sig, frame):
+    """Handle interrupt signals gracefully"""
+    logger.info("\nShutting down gracefully... Please wait...")
+    try:
+        # Close MongoDB connection
+        if 'mongo_client' in globals():
+            mongo_client.close()
+            logger.info("Closed MongoDB connection")
+        
+        # Clean up temporary files if any
+        if 'output_dir' in globals() and os.path.exists(output_dir):
+            logger.info(f"Temporary files remain in: {output_dir}")
+    except Exception as e:
+        logger.error(f"Error during shutdown: {e}")
+    
+    logger.info("Shutdown complete")
+    sys.exit(0)
 
-logger.info(f"Completed processing. Total documents processed: {len(results)}")
+# Register the signal handler
+signal.signal(signal.SIGINT, signal_handler)
+signal.signal(signal.SIGTERM, signal_handler)
 
-# Close MongoDB connection
-mongo_client.close()
+try:
+    # Process Kansas WC Appeal Decisions in batches
+    logger.info(f"Starting processing with batch size {args.batch_size}, max documents {args.max_documents}")
+    logger.info("Press Ctrl+C to stop processing")
+    
+    results = processor.process_ks_wc_appeals(
+        batch_size=args.batch_size,
+        review_callback=review_batch,
+        max_documents=args.max_documents
+    )
+
+    logger.info(f"Completed processing. Total documents processed: {len(results)}")
+
+except KeyboardInterrupt:
+    logger.info("\nProcess interrupted by user")
+    signal_handler(signal.SIGINT, None)
+except Exception as e:
+    logger.error(f"Error during processing: {e}")
+    signal_handler(signal.SIGINT, None)
+finally:
+    # Close MongoDB connection
+    if 'mongo_client' in globals():
+        mongo_client.close()

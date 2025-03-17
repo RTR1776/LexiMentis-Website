@@ -11,6 +11,7 @@ import os
 import re
 import json
 import logging
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional, Any, Iterator
 from dataclasses import dataclass, asdict
@@ -736,12 +737,6 @@ class PDFProcessor:
     def _process_gcs_batch(self, blobs: List[storage.Blob]) -> List[Dict[str, Any]]:
         """
         Process a batch of PDF blobs from Google Cloud Storage.
-        
-        Args:
-            blobs: List of GCS blobs to process
-            
-        Returns:
-            List of processed document data
         """
         results = []
         
@@ -752,23 +747,42 @@ class PDFProcessor:
                     temp_path = temp_file.name
                     blob.download_to_filename(temp_path)
                 
-                # Process the PDF
-                doc_data = self.process_pdf(temp_path)
+                # Extract text
+                text = self.pdf_extractor.extract_text(temp_path)
                 
-                # Add source information
-                doc_data['source'] = {
-                    'bucket': blob.bucket.name,
-                    'path': blob.name,
-                    'size': blob.size,
-                    'updated': blob.updated.isoformat() if blob.updated else None
+                if not text.strip():
+                    logger.warning(f"No text extracted from {blob.name}")
+                    continue
+                
+                # Process document
+                filename = os.path.basename(blob.name)
+                doc = self.doc_processor.process_document(filename, text)
+                
+                # Generate embedding if enabled
+                if self.use_bge and self.embedder:
+                    doc = self.embedder.embed_document(doc)
+                
+                # Convert to dictionary format
+                doc_dict = {
+                    'metadata': asdict(doc.metadata),
+                    'full_text': doc.full_text,
+                    'sections': doc.sections,
+                    'embedding': doc.embedding,
+                    'source': {
+                        'bucket': blob.bucket.name,
+                        'path': blob.name,
+                        'size': blob.size,
+                        'updated': blob.updated.isoformat() if blob.updated else None
+                    }
                 }
                 
-                results.append(doc_data)
+                results.append(doc_dict)
                 
                 # Clean up the temporary file
                 os.unlink(temp_path)
+                
             except Exception as e:
-                print(f"Error processing {blob.name}: {str(e)}")
+                logger.error(f"Error processing {blob.name}: {str(e)}")
                 # Continue with the next file even if this one fails
         
         return results
@@ -846,103 +860,4 @@ def main():
     processor.save_processed_docs(docs)
 
 if __name__ == "__main__":
-    main()
-
-# Check GCS bucket contents
-client = storage.Client()
-bucket = client.get_bucket("leximentis_mvp")
-blobs = list(bucket.list_blobs(prefix="KS WC Appeal Decisions", max_results=5))
-print([blob.name for blob in blobs])
-
-# Create output directory with timestamp
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-output_dir = f"./processed_batches_{timestamp}"
-os.makedirs(output_dir, exist_ok=True)
-
-# Initialize the processor with optimal settings for your hardware
-processor = PDFProcessor(
-    gcs_bucket_name="leximentis_mvp",
-    local_data_dir=output_dir,
-    use_ocr=True,  # Enable OCR for scanned PDFs
-    use_bge=True,  # Enable embeddings
-    bge_model_name="BAAI/bge-large-en-v1.5"
-)
-
-# Function to review batches and save results
-def review_batch(batch_results):
-    """Display batch summary and save results."""
-    batch_num = len(os.listdir(output_dir)) + 1
-    
-    print(f"\n===== BATCH {batch_num}: Processed {len(batch_results)} documents =====")
-    
-    # Display sample of documents (first 10)
-    for i, doc in enumerate(batch_results[:10], 1):
-        metadata = doc.get('metadata', {})
-        docket = metadata.get('docket_number', 'Unknown')
-        title = metadata.get('document_title', 'Untitled')
-        source = doc.get('source', {}).get('path', 'Unknown')
-        
-        print(f"{i}. Docket: {docket} - {source}")
-    
-    if len(batch_results) > 10:
-        print(f"... and {len(batch_results)-10} more documents")
-    
-    # Save batch results
-    batch_filename = f"{output_dir}/batch_{batch_num}_results.json"
-    with open(batch_filename, 'w') as f:
-        # Convert any non-serializable objects
-        serializable_results = []
-        for doc in batch_results:
-            serializable_doc = {}
-            for key, value in doc.items():
-                if isinstance(value, dict):
-                    serializable_doc[key] = value
-                elif hasattr(value, '__dict__'):
-                    serializable_doc[key] = value.__dict__
-                else:
-                    serializable_doc[key] = value
-            serializable_results.append(serializable_doc)
-        
-        json.dump(serializable_results, f, indent=2)
-    
-    print(f"Saved batch results to {batch_filename}")
-    
-    # Always continue with next batch in this example
-    # You can add a cell with input() if you want manual review
-    return True
-
-# Process Kansas WC Appeal Decisions in batches of 250
-print("Starting batch processing of Kansas WC Appeal Decisions...")
-print("Files will be pulled from leximentis_mvp bucket, KS WC Appeal Decisions folder")
-print("Processing will occur in batches of 250 files")
-
-# Configure for your hardware (8 vCPUs)
-num_workers = 6  # Leave some CPU headroom for the notebook itself
-
-# Process the documents
-results = processor.process_ks_wc_appeals(
-    batch_size=250,
-    review_callback=review_batch
-)
-
-print(f"Completed processing. Total documents processed: {len(results)}")
-
-# Save all results
-all_results_file = f"{output_dir}/all_results.json"
-with open(all_results_file, 'w') as f:
-    # Convert any non-serializable objects
-    serializable_results = []
-    for doc in results:
-        serializable_doc = {}
-        for key, value in doc.items():
-            if isinstance(value, dict):
-                serializable_doc[key] = value
-            elif hasattr(value, '__dict__'):
-                serializable_doc[key] = value.__dict__
-            else:
-                serializable_doc[key] = value
-        serializable_results.append(serializable_doc)
-    
-    json.dump(serializable_results, f, indent=2)
-
-print(f"All results saved to {all_results_file}") 
+    main() 
