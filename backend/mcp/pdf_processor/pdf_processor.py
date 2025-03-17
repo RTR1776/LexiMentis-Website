@@ -683,7 +683,8 @@ class PDFProcessor:
         bucket_name: str,
         folder_path: str,
         batch_size: int = 250,
-        review_callback: Optional[callable] = None
+        review_callback: Optional[callable] = None,
+        max_documents: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """
         Process PDFs from a Google Cloud Storage bucket in batches.
@@ -693,6 +694,7 @@ class PDFProcessor:
             folder_path: Path to the folder within the bucket
             batch_size: Number of PDFs to process in each batch
             review_callback: Optional callback function for batch review
+            max_documents: Maximum number of PDFs to process (None for all)
             
         Returns:
             List of processed document data
@@ -705,8 +707,14 @@ class PDFProcessor:
         blobs = list(bucket.list_blobs(prefix=folder_path))
         pdf_blobs = [blob for blob in blobs if blob.name.lower().endswith('.pdf')]
         
-        total_pdfs = len(pdf_blobs)
-        print(f"Found {total_pdfs} PDF files in bucket '{bucket_name}' under path '{folder_path}'")
+        # Apply max_documents limit if specified
+        if max_documents is not None and max_documents > 0:
+            pdf_blobs = pdf_blobs[:max_documents]
+            total_pdfs = len(pdf_blobs)
+            print(f"Processing {total_pdfs} PDF files (limited by max_documents)")
+        else:
+            total_pdfs = len(pdf_blobs)
+            print(f"Found {total_pdfs} PDF files in bucket '{bucket_name}' under path '{folder_path}'")
         
         # Process PDFs in batches
         for i in range(0, total_pdfs, batch_size):
@@ -768,7 +776,8 @@ class PDFProcessor:
     def process_ks_wc_appeals(
         self,
         batch_size: int = 250,
-        review_callback: Optional[callable] = None
+        review_callback: Optional[callable] = None,
+        max_documents: Optional[int] = None
     ) -> List[Dict[str, Any]]:
         """
         Process Kansas Workers' Compensation Appeal Decisions from the leximentis_mvp bucket.
@@ -776,6 +785,7 @@ class PDFProcessor:
         Args:
             batch_size: Number of PDFs to process in each batch
             review_callback: Optional callback function for batch review
+            max_documents: Maximum number of PDFs to process (None for all)
             
         Returns:
             List of processed document data
@@ -787,7 +797,8 @@ class PDFProcessor:
             bucket_name=bucket_name,
             folder_path=folder_path,
             batch_size=batch_size,
-            review_callback=review_callback
+            review_callback=review_callback,
+            max_documents=max_documents
         )
 
 def main():
