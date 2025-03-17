@@ -5,6 +5,8 @@ import logging
 import argparse
 import signal
 import sys
+import time
+import json
 
 # Set up command line arguments
 parser = argparse.ArgumentParser(description='Process PDFs and store in MongoDB')
@@ -14,7 +16,7 @@ parser.add_argument('--mongodb-uri', type=str, default='mongodb://localhost:2701
 parser.add_argument('--db-name', type=str, default='leximentis', help='MongoDB database name')
 parser.add_argument('--collection', type=str, default='ks_wc_appeals', help='MongoDB collection name')
 parser.add_argument('--gcs-bucket', type=str, default='leximentis_mvp', help='GCS bucket name')
-parser.add_argument('--use-ocr', action='store_true', default=True, help='Use OCR for text extraction')
+parser.add_argument('--use-ocr', action='store_true', default=False, help='Use OCR for text extraction')
 parser.add_argument('--use-bge', action='store_true', default=True, help='Generate BGE embeddings')
 args = parser.parse_args()
 
@@ -28,15 +30,34 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 output_dir = f"./processed_batches_{timestamp}"
 os.makedirs(output_dir, exist_ok=True)
 
-# MongoDB connection
+# MongoDB connection with retry logic
+def connect_mongodb(uri, max_retries=3):
+    """Connect to MongoDB with retry logic"""
+    for attempt in range(max_retries):
+        try:
+            client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+            # Test the connection
+            client.admin.command('ping')
+            return client
+        except Exception as e:
+            logger.error(f"MongoDB connection attempt {attempt + 1} failed: {e}")
+            if attempt + 1 == max_retries:
+                raise
+            time.sleep(2)  # Wait before retrying
+
+# Replace the MongoDB connection code with:
 try:
-    mongo_client = MongoClient(args.mongodb_uri)
+    # Try connecting to MongoDB
+    mongo_client = connect_mongodb(args.mongodb_uri)
     db = mongo_client[args.db_name]
     collection = db[args.collection]
     logger.info(f"Successfully connected to MongoDB - {args.db_name}.{args.collection}")
 except Exception as e:
     logger.error(f"Failed to connect to MongoDB: {str(e)}")
-    raise
+    logger.info("Continuing without MongoDB storage...")
+    mongo_client = None
+    db = None
+    collection = None
 
 # Initialize the processor
 processor = PDFProcessor(
@@ -46,30 +67,35 @@ processor = PDFProcessor(
     use_bge=args.use_bge
 )
 
-# Define a review callback function
+# Update the review_batch function to handle no MongoDB connection
 def review_batch(batch_results):
     """Display batch summary and save results to MongoDB."""
     batch_num = len(os.listdir(output_dir)) + 1
     
     logger.info(f"\n===== BATCH {batch_num}: Processed {len(batch_results)} documents =====")
     
-    # Display sample of documents (first 10)
+    # Display sample of documents
     for i, doc in enumerate(batch_results[:10], 1):
         metadata = doc.get('metadata', {})
         docket = metadata.get('docket_number', 'Unknown')
         source = doc.get('source', {}).get('path', 'Unknown')
-        
         logger.info(f"{i}. Docket: {docket} - {source}")
     
-    # Store documents in MongoDB
-    try:
-        if batch_results:
-            collection.insert_many(batch_results)
-            logger.info(f"Successfully stored {len(batch_results)} documents in MongoDB")
-    except Exception as e:
-        logger.error(f"Failed to store documents in MongoDB: {str(e)}")
+    # Store documents in MongoDB if available
+    if collection is not None:
+        try:
+            if batch_results:
+                collection.insert_many(batch_results)
+                logger.info(f"Successfully stored {len(batch_results)} documents in MongoDB")
+        except Exception as e:
+            logger.error(f"Failed to store documents in MongoDB: {str(e)}")
+    else:
+        # Save to JSON file instead
+        batch_file = os.path.join(output_dir, f"batch_{batch_num}.json")
+        with open(batch_file, 'w') as f:
+            json.dump(batch_results, f)
+        logger.info(f"Saved batch results to {batch_file} (MongoDB not available)")
     
-    # Always continue with next batch
     return True
 
 def signal_handler(sig, frame):
