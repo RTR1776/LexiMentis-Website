@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Send, Download, RefreshCw, Info, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Send, Download, RefreshCw, Info, AlertTriangle, CheckCircle, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getApiUrl } from '../utils/env';
+import { sendToMcpAssistant } from '../mcp/apiService';
 
 const AIDemo = () => {
   const [inputValue, setInputValue] = useState('');
@@ -14,6 +15,8 @@ const AIDemo = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
   const [showLimitWarning, setShowLimitWarning] = useState(false);
+  const [sources, setSources] = useState([]);
+  const [showSources, setShowSources] = useState(false);
   const apiUrl = getApiUrl();
 
   const handleSubmit = async (e) => {
@@ -35,23 +38,17 @@ const AIDemo = () => {
     setIsProcessing(true);
     
     try {
-      // Replace the existing Datastax Langflow endpoint
-      const response = await fetch(`${apiUrl}/api/mcp-assistant`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ messages: newMessages })
-      });
+      // Use our simplified MCP implementation
+      const response = await sendToMcpAssistant(newMessages);
+      setMessages(prevMessages => [...prevMessages, { role: 'assistant', content: response.reply }]);
       
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      // Store the sources for the sources panel
+      if (response.sources && response.sources.length > 0) {
+        setSources(response.sources);
+        setShowSources(true);
+      } else {
+        setSources([]);
       }
-      
-      const data = await response.json();
-      // Assume the API returns { reply: "..." }
-      const reply = data.reply || 'Sorry, no response available at the moment.';
-      setMessages(prevMessages => [...prevMessages, { role: 'assistant', content: reply }]);
     } catch (error) {
       console.error('Error fetching demo response:', error);
       setMessages(prevMessages => [
@@ -71,6 +68,12 @@ const AIDemo = () => {
     }]);
     setUsageCount(0);
     setShowLimitWarning(false);
+    setSources([]);
+    setShowSources(false);
+  };
+
+  const toggleSources = () => {
+    setShowSources(prev => !prev);
   };
 
   return (
@@ -92,134 +95,186 @@ const AIDemo = () => {
       {/* Content Section */}
       <div className="py-16">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="bg-white dark:bg-secondary-800 rounded-xl shadow-lg overflow-hidden border border-neutral-200 dark:border-secondary-700">
-            {/* Chat Header */}
-            <div className="p-6 border-b border-neutral-200 dark:border-secondary-700 bg-accent-50 dark:bg-accent-900/30 flex flex-col sm:flex-row justify-between items-center">
-              <div>
-                <h2 className="text-2xl font-bold text-secondary-900 dark:text-neutral-100">AI Workers Comp Assistant</h2>
-                <p className="text-secondary-600 dark:text-neutral-300">
-                  Demo version - Try asking about any Kansas workers compensation appeals opinions
-                </p>
-              </div>
-              <div className="mt-4 sm:mt-0 flex items-center text-sm">
-                <span className="text-secondary-500 dark:text-neutral-400">
-                  Usage: {usageCount}/5 queries
-                </span>
-                <button 
-                  onClick={resetDemo}
-                  className="ml-4 p-2 rounded-full hover:bg-neutral-200 dark:hover:bg-secondary-700 transition-colors"
-                  title="Reset demo"
-                >
-                  <RefreshCw className="h-4 w-4 text-secondary-600 dark:text-neutral-400" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Messages Container */}
-            <div className="p-6 h-96 overflow-y-auto flex flex-col space-y-4">
-              {messages.map((message, index) => (
-                <div 
-                  key={index} 
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div 
-                    className={`max-w-3/4 rounded-xl p-4 ${
-                      message.role === 'user' 
-                        ? 'bg-accent-800 text-white' 
-                        : message.role === 'system'
-                          ? 'bg-neutral-100 dark:bg-secondary-700 text-secondary-800 dark:text-neutral-200 border border-neutral-200 dark:border-secondary-600'
-                          : 'bg-neutral-200 dark:bg-secondary-600 text-secondary-800 dark:text-neutral-200'
-                    }`}
-                  >
-                    {message.content}
-                  </div>
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Chat Panel */}
+            <div className="lg:w-2/3 bg-white dark:bg-secondary-800 rounded-xl shadow-lg overflow-hidden border border-neutral-200 dark:border-secondary-700">
+              {/* Chat Header */}
+              <div className="p-6 border-b border-neutral-200 dark:border-secondary-700 bg-accent-50 dark:bg-accent-900/30 flex flex-col sm:flex-row justify-between items-center">
+                <div>
+                  <h2 className="text-2xl font-bold text-secondary-900 dark:text-neutral-100">AI Workers Comp Assistant</h2>
+                  <p className="text-secondary-600 dark:text-neutral-300">
+                    Demo version - Try asking about any Kansas workers compensation appeals opinions
+                  </p>
                 </div>
-              ))}
-              
-              {isProcessing && (
-                <div className="flex justify-start">
-                  <div className="bg-neutral-200 dark:bg-secondary-600 text-secondary-800 dark:text-neutral-200 rounded-xl p-4 max-w-3/4 flex items-center">
-                    <div className="flex space-x-1">
-                      <div className="h-2 w-2 bg-secondary-600 dark:bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="h-2 w-2 bg-secondary-600 dark:bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                      <div className="h-2 w-2 bg-secondary-600 dark:bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '600ms' }}></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {showLimitWarning && (
-                <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 dark:border-yellow-700 p-4 flex items-start">
-                  <AlertTriangle className="h-5 w-5 text-yellow-500 dark:text-yellow-300 mr-3 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                      You've reached the maximum number of queries for this demo. Please book a call to learn more about the full capabilities.
-                    </p>
-                    <div className="mt-3">
-                      <button 
-                        className="text-sm font-medium text-yellow-700 dark:text-yellow-300 hover:text-yellow-600 dark:hover:text-yellow-200 underline"
-                        onClick={resetDemo}
-                      >
-                        Reset Demo
-                      </button>
-                      <Link 
-                        to="/book"
-                        className="ml-4 text-sm font-medium bg-accent-800 hover:bg-accent-700 text-white py-1 px-3 rounded"
-                      >
-                        Book a Call
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/* Input Area */}
-            <form onSubmit={handleSubmit} className="border-t border-neutral-200 dark:border-secondary-700 p-4">
-              <div className="flex items-center">
-                <button 
-                  type="button"
-                  className="p-2 text-secondary-500 dark:text-neutral-400 hover:text-secondary-700 dark:hover:text-neutral-200 focus:outline-none"
-                  title="Upload document"
-                >
-                  <Download className="h-5 w-5" />
-                </button>
-                
-                <input
-                  type="text"
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask about Kansas and Missouri workers compensation..."
-                  className="flex-grow px-4 py-2 focus:outline-none bg-white dark:bg-secondary-800 text-secondary-800 dark:text-neutral-200"
-                  disabled={isProcessing || showLimitWarning}
-                />
-                
-                <button 
-                  type="submit" 
-                  className={`p-2 rounded-lg transition-colors ${
-                    isProcessing || !inputValue.trim() || showLimitWarning
-                      ? 'text-secondary-400 cursor-not-allowed'
-                      : 'text-accent-800 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20'
-                  }`}
-                  disabled={isProcessing || !inputValue.trim() || showLimitWarning}
-                >
-                  <Send className="h-5 w-5" />
-                </button>
-              </div>
-              
-              <div className="mt-2 flex justify-between items-center text-xs text-secondary-500 dark:text-neutral-400">
-                <div className="flex items-center">
-                  <Info className="h-3 w-3 mr-1" />
-                  <span>
-                    Demo mode: Responses are currently limited to Kansas workers compensation appeals opinions.
+                <div className="mt-4 sm:mt-0 flex items-center text-sm">
+                  <span className="text-secondary-500 dark:text-neutral-400">
+                    Usage: {usageCount}/5 queries
                   </span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  <span>Your data is not stored</span>
+                  <button 
+                    onClick={resetDemo}
+                    className="ml-4 p-2 rounded-full hover:bg-neutral-200 dark:hover:bg-secondary-700 transition-colors"
+                    title="Reset demo"
+                  >
+                    <RefreshCw className="h-4 w-4 text-secondary-600 dark:text-neutral-400" />
+                  </button>
                 </div>
               </div>
-            </form>
+              
+              {/* Messages Container */}
+              <div className="p-6 h-96 overflow-y-auto flex flex-col space-y-4">
+                {messages.map((message, index) => (
+                  <div 
+                    key={index} 
+                    className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div 
+                      className={`max-w-3/4 rounded-xl p-4 ${
+                        message.role === 'user' 
+                          ? 'bg-accent-800 text-white' 
+                          : message.role === 'system'
+                            ? 'bg-neutral-100 dark:bg-secondary-700 text-secondary-800 dark:text-neutral-200 border border-neutral-200 dark:border-secondary-600'
+                            : 'bg-neutral-200 dark:bg-secondary-600 text-secondary-800 dark:text-neutral-200'
+                      }`}
+                    >
+                      {message.content}
+                    </div>
+                  </div>
+                ))}
+                
+                {isProcessing && (
+                  <div className="flex justify-start">
+                    <div className="bg-neutral-200 dark:bg-secondary-600 text-secondary-800 dark:text-neutral-200 rounded-xl p-4 max-w-3/4 flex items-center">
+                      <div className="flex space-x-1">
+                        <div className="h-2 w-2 bg-secondary-600 dark:bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="h-2 w-2 bg-secondary-600 dark:bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        <div className="h-2 w-2 bg-secondary-600 dark:bg-neutral-400 rounded-full animate-bounce" style={{ animationDelay: '600ms' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {showLimitWarning && (
+                  <div className="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 dark:border-yellow-700 p-4 flex items-start">
+                    <AlertTriangle className="h-5 w-5 text-yellow-500 dark:text-yellow-300 mr-3 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                        You've reached the maximum number of queries for this demo. Please book a call to learn more about the full capabilities.
+                      </p>
+                      <div className="mt-3">
+                        <button 
+                          className="text-sm font-medium text-yellow-700 dark:text-yellow-300 hover:text-yellow-600 dark:hover:text-yellow-200 underline"
+                          onClick={resetDemo}
+                        >
+                          Reset Demo
+                        </button>
+                        <Link 
+                          to="/book"
+                          className="ml-4 text-sm font-medium bg-accent-800 hover:bg-accent-700 text-white py-1 px-3 rounded"
+                        >
+                          Book a Call
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* Input Area */}
+              <form onSubmit={handleSubmit} className="border-t border-neutral-200 dark:border-secondary-700 p-4">
+                <div className="flex items-center">
+                  <button 
+                    type="button"
+                    className="p-2 text-secondary-500 dark:text-neutral-400 hover:text-secondary-700 dark:hover:text-neutral-200 focus:outline-none"
+                    title="Upload document"
+                  >
+                    <Download className="h-5 w-5" />
+                  </button>
+
+                  <button 
+                    type="button"
+                    onClick={toggleSources}
+                    className={`p-2 ${
+                      showSources 
+                        ? 'text-accent-800 dark:text-accent-400' 
+                        : 'text-secondary-500 dark:text-neutral-400 hover:text-secondary-700 dark:hover:text-neutral-200'
+                    } focus:outline-none`}
+                    title="Show/hide sources"
+                  >
+                    <BookOpen className="h-5 w-5" />
+                  </button>
+                  
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Ask about Kansas and Missouri workers compensation..."
+                    className="flex-grow px-4 py-2 focus:outline-none bg-white dark:bg-secondary-800 text-secondary-800 dark:text-neutral-200"
+                    disabled={isProcessing || showLimitWarning}
+                  />
+                  
+                  <button 
+                    type="submit" 
+                    className={`p-2 rounded-lg transition-colors ${
+                      isProcessing || !inputValue.trim() || showLimitWarning
+                        ? 'text-secondary-400 cursor-not-allowed'
+                        : 'text-accent-800 dark:text-accent-400 hover:bg-accent-50 dark:hover:bg-accent-900/20'
+                    }`}
+                    disabled={isProcessing || !inputValue.trim() || showLimitWarning}
+                  >
+                    <Send className="h-5 w-5" />
+                  </button>
+                </div>
+                
+                <div className="mt-2 flex justify-between items-center text-xs text-secondary-500 dark:text-neutral-400">
+                  <div className="flex items-center">
+                    <Info className="h-3 w-3 mr-1" />
+                    <span>
+                      Demo mode: Responses are currently limited to Kansas workers compensation appeals opinions.
+                    </span>
+                  </div>
+                  <div className="flex items-center">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    <span>Your data is not stored</span>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            {/* Sources Panel */}
+            {showSources && (
+              <div className="lg:w-1/3 bg-white dark:bg-secondary-800 rounded-xl shadow-lg overflow-hidden border border-neutral-200 dark:border-secondary-700">
+                <div className="p-4 border-b border-neutral-200 dark:border-secondary-700 bg-neutral-100 dark:bg-secondary-700">
+                  <h3 className="text-lg font-semibold text-secondary-900 dark:text-neutral-100">Source Documents</h3>
+                  <p className="text-sm text-secondary-600 dark:text-neutral-400">
+                    Reference documents used to answer your query
+                  </p>
+                </div>
+                
+                <div className="p-4 h-96 overflow-y-auto">
+                  {sources.length > 0 ? (
+                    <div className="space-y-4">
+                      {sources.map((source, index) => (
+                        <div key={index} className="p-3 rounded-lg border border-neutral-200 dark:border-secondary-700">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className="font-medium text-secondary-800 dark:text-neutral-200">{source.source}</h4>
+                            <span className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-full">
+                              {(source.score * 100).toFixed(0)}% match
+                            </span>
+                          </div>
+                          <p className="text-sm text-secondary-600 dark:text-neutral-400 line-clamp-4">
+                            {source.text}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-secondary-500 dark:text-neutral-400">
+                      <p>No source documents available for this query.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Features Section */}
