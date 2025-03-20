@@ -8,7 +8,7 @@ const AIDemo = () => {
   const [messages, setMessages] = useState([
     {
       role: 'system',
-      content: 'Welcome to the Kansas and Missouri Workers Compensation AI Assistant demo. You can ask questions about workers compensation law for Kansas or Missouri, procedures, or try uploading a sample document for analysis.'
+      content: 'FEATURE UPDATE COMING SOON: Welcome to the Kansas and Missouri Workers Compensation AI Assistant demo. You can ask questions about workers compensation law for Kansas or Missouri, procedures, or try uploading a sample document for analysis.'
     }
   ]);
   const [isProcessing, setIsProcessing] = useState(false);
