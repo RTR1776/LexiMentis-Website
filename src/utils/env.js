@@ -33,7 +33,12 @@ export const getEnv = (key, defaultValue = null, isRequired = false) => {
  * @returns {string} The API URL
  */
 export const getApiUrl = () => {
-  return getEnv('REACT_APP_API_URL', 'http://localhost:3001');
+  // For development
+  if (process.env.NODE_ENV === 'development') {
+    return process.env.REACT_APP_DEV_API_URL || 'http://localhost:5000';
+  }
+  // For production
+  return process.env.REACT_APP_API_URL || 'https://api.leximentis.com';
 };
 
 /**
@@ -79,4 +84,23 @@ export const isDevelopment = () => {
  */
 export const isProduction = () => {
   return getEnv('NODE_ENV') === 'production';
+};
+
+/**
+ * Checks if all required environment variables are available
+ * Useful for Docker startup checks
+ * 
+ * @param {string[]} requiredVars - Array of required variable names
+ * @returns {boolean} - Whether all required variables are present
+ */
+export const checkRequiredEnvVars = (requiredVars = []) => {
+  const missing = requiredVars.filter(key => !process.env[key]);
+  
+  if (missing.length > 0) {
+    console.error('Missing required environment variables:');
+    missing.forEach(key => console.error(`- ${key}`));
+    return false;
+  }
+  
+  return true;
 }; 

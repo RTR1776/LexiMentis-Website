@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # Frontend service - useful for local development
+  # Note: You can comment this out when working solely on backend
+  # since your production frontend is on Vercel
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+      - REACT_APP_DB_NAME=${REACT_APP_DB_NAME}
+      - REACT_APP_COLLECTION_NAME=${REACT_APP_COLLECTION_NAME}
+      - REACT_APP_USE_DIRECT_INTEGRATION=${REACT_APP_USE_DIRECT_INTEGRATION}
+    volumes:
+      - ./src:/app/src  # For hot reloading of frontend code
+      - /app/node_modules  # Prevents overwriting container's node_modules
+
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - NODE_ENV=development
+      - MONGODB_URI=${MONGODB_URI}
+      - DB_NAME=${DB_NAME}
+      - COLLECTION_NAME=${COLLECTION_NAME}
+      - MONGODB_DB_NAME=${MONGODB_DB_NAME}
+      - MONGODB_COLLECTION=${MONGODB_COLLECTION}
+      - MONGODB_VECTOR_COLLECTION=${MONGODB_VECTOR_COLLECTION}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/gcp-key.json
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT}
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GCP_LOCATION=${GCP_LOCATION}
+      - GCP_EMBEDDING_MODEL_ID=${GCP_EMBEDDING_MODEL_ID}
+      - API_URL=${API_URL}
+      - USE_DIRECT_INTEGRATION=${USE_DIRECT_INTEGRATION}
+    env_file:
+      - .env
+    volumes:
+      - ./backend/app:/app/app  # For hot reloading
+      - ./credentials:/app/credentials  # For GCP credentials
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+
+  # MongoDB service
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+
+volumes:
+  mongodb_data:
