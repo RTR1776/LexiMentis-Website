@@ -18,17 +18,13 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy backend code
-COPY ./app /app/app
+COPY app /app/app
 
 # Create directory for GCP credentials
 RUN mkdir -p /app/credentials
 
-# Set environment variables
-ENV PORT=8000
-ENV PYTHONPATH=/app
-
 # Expose port
 EXPOSE 8000
 
-# Command to run the application
+# Start the application
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
